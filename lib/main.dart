@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.SPLASH_SCREEN,
       getPages: AppPages.list,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
+      theme: ThemeData(fontFamily: 'Nunito'),
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
     );
