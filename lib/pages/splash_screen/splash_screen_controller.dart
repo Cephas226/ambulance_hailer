@@ -6,7 +6,7 @@ class SplashScreenController extends GetxController {
     super.onInit();
     Future.delayed(Duration(seconds: 5), () {
       print("After 5 seconds");
-      Get.offNamedUntil('/', (route) => false);
+      Get.offNamedUntil('/login', (route) => false);
     });
   }
 }

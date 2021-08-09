@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 class HomeController extends GetxController {
 
   final actualPositionController  = TextEditingController();
-  final destinationPositionController = TextEditingController();
+  final destinationPositionController = TextEditingController().obs;
   static LatLng _initialPosition;
   LatLng get initialPosition => _initialPosition;
   LatLng get lastPosition => _lastPosition;
@@ -16,26 +16,25 @@ class HomeController extends GetxController {
   Position _center;
   @override
   void dispose() {
-    destinationPositionController.dispose();
+    destinationPositionController.value.dispose();
     super.dispose();
   }
   @override
-  void onInit() {
-    super.onInit();
+  Future<void> onInit() async {
     _getUserLocation();
     _loadingInitialPosition();
+    super.onInit();
   }
   void _getUserLocation() async {
     print("GET USER METHOD RUNNING =========");
    Position position = await Geolocator.getCurrentPosition();
+    _initialPosition = LatLng(position.latitude, position.longitude);
     List<Placemark> placemark = await placemarkFromCoordinates(
         position.latitude,
         position.longitude
     );
     actualPositionController.text = placemark[0].street;
     print("initial position is : ${_initialPosition.toString()}");
-    _initialPosition = LatLng(position.latitude, position.longitude);
-
   }
 
   void _loadingInitialPosition()async{

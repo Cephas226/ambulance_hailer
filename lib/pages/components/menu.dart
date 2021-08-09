@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:getx_app/models/menu_list_item.dart';
+import 'package:getx_app/pages/authentification/help_support.dart';
+import 'package:getx_app/pages/user/RateCard.dart';
+import 'package:getx_app/pages/user/emergency_contact.dart';
+import 'package:getx_app/pages/trip/my_trips.dart';
+import 'package:getx_app/pages/user/payment_menu.dart';
+import 'package:getx_app/pages/user/profile.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:getx_app/utils/menu_title.dart';
 
@@ -25,12 +31,8 @@ class _MenuState extends State<Menu> {
         createMenuItem(MenuTitle.MENU_MY_TRIPS, "images/menu/my_trips.png"));
     listMenuItem.add(
         createMenuItem(MenuTitle.MENU_RATE_CARD, "images/menu/rate_card.png"));
-    listMenuItem.add(createMenuItem(
-        MenuTitle.MENU_NEWS_OFFERS, "images/menu/news_offers.png"));
     listMenuItem.add(createMenuItem(MenuTitle.MENU_EMERGENCY_CONTACTS,
         "images/menu/emergency_contacts.png"));
-    listMenuItem.add(createMenuItem(
-        MenuTitle.MENU_HELP_SUPPORT, "images/menu/help_support.png"));
   }
 
   createMenuItem(String title, String imgIcon) {
@@ -121,16 +123,13 @@ class _MenuState extends State<Menu> {
   createMenuListItemWidget(int position) {
     return GestureDetector(
       onTap: () {
-       /* if (listMenuItem[position].title == MenuTitle.MENU_PROFILE) {
+        if (listMenuItem[position].title == MenuTitle.MENU_PROFILE) {
           Navigator.of(context)
               .push(new MaterialPageRoute(builder: (context) => Profile()));
         } else if (listMenuItem[position].title == MenuTitle.MENU_PAYMENT) {
           Navigator.of(context)
               .push(new MaterialPageRoute(builder: (context) => PaymentMenu()));
-        } else if (listMenuItem[position].title == MenuTitle.MENU_BOOK_LATER) {
-          Navigator.of(context).push(new MaterialPageRoute(
-              builder: (context) => BookLaterDatePicker()));
-        } else if (listMenuItem[position].title == MenuTitle.MENU_MY_TRIPS) {
+        }  else if (listMenuItem[position].title == MenuTitle.MENU_MY_TRIPS) {
           Navigator.of(context)
               .push(new MaterialPageRoute(builder: (context) => MyTrips()));
         } else if (listMenuItem[position].title == MenuTitle.MENU_RATE_CARD) {
@@ -144,10 +143,7 @@ class _MenuState extends State<Menu> {
             MenuTitle.MENU_HELP_SUPPORT) {
           Navigator.of(context)
               .push(new MaterialPageRoute(builder: (context) => HelpSupport()));
-        } else if (listMenuItem[position].title == MenuTitle.MENU_NEWS_OFFERS) {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (context) => NewsOffers()));
-        }*/
+        }
       },
       child: Container(
         padding: EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
