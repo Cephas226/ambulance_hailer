@@ -1,8 +1,12 @@
 import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:getx_app/pages/home/home_page.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'driver_on_the_way.dart';
 
 class CancelTripPage extends StatefulWidget {
   @override
@@ -100,21 +104,42 @@ class _CancelTripState extends State<CancelTripPage> {
                           SizedBox(
                             height: 8,
                           ),
-                          Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                margin: EdgeInsets.only(top: 16),
-                                child: RaisedButton(
-                                  onPressed: () {
-                                   
-                                  },
-                                  color: Colors.grey.shade200,
-                                  child: Text(
-                                    "Cancel Trip",
-                                    style: CustomTextStyle.mediumTextStyle,
+                          Flexible(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 180,
+                                    margin: EdgeInsets.only(top: 16),
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        Get.to(DriverOnTheWay());
+                                      },
+                                      color: Colors.orange,
+                                      child: Text(
+                                        "Validate trip",
+                                        style: CustomTextStyle.mediumTextStyle,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ))
+                                  Container(
+                                    width: 180,
+                                    margin: EdgeInsets.only(top: 16),
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        Get.off(HomePage());
+                                      },
+                                      color: Colors.grey.shade200,
+                                      child: Text(
+                                        "Cancel Trip",
+                                        style: CustomTextStyle.mediumTextStyle,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                          )
                         ],
                       ),
                     ),

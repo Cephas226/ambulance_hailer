@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:getx_app/models/directions_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 
 class Place {
@@ -104,3 +108,43 @@ class PlaceApiProvider {
     }
   }
 }
+
+const apiKey = "AIzaSyBhDflq5iJrXIcKpeq0IzLQPQpOboX91lY";
+
+class GoogleMapsServices{
+  Future<String> getRouteCoordinates(LatLng l1, LatLng l2)async{
+    String url = "https://maps.googleapis.com/maps/api/directions/json?origin=${l1.latitude},${l1.longitude}&destination=${l2.latitude},${l2.longitude}&key=$apiKey";
+    http.Response response = await http.get(url);
+    Map values = jsonDecode(response.body);
+    return values["routes"][0]["overview_polyline"]["points"];
+  }
+}
+class DirectionsRepository {
+  static const String _baseUrl =
+      'https://maps.googleapis.com/maps/api/directions/json?';
+
+  final Dio _dio;
+
+  DirectionsRepository({Dio dio}) : _dio = dio ?? Dio();
+
+  Future<Directions> getDirections({
+    @required LatLng origin,
+    @required LatLng destination,
+  }) async {
+    final response = await _dio.get(
+      _baseUrl,
+      queryParameters: {
+        'origin': '${origin.latitude},${origin.longitude}',
+        'destination': '${destination.latitude},${destination.longitude}',
+        'key': "AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE",
+      },
+    );
+
+    // Check if response is successful
+    if (response.statusCode == 200) {
+      return Directions.fromMap(response.data);
+    }
+    return null;
+  }
+}
+

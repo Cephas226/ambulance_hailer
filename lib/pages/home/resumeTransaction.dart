@@ -25,7 +25,7 @@ class ResumeTransPage extends GetView<HomeController> {
   GoogleMapController mapController;
   BitmapDescriptor bitmapDescriptor;
   final HomeController hController = Get.put(HomeController());
-
+  Map<PolylineId, Polyline> polylines = {};
   @override
   Widget build(BuildContext context) {
     Size size = Get.size;
@@ -42,10 +42,11 @@ class ResumeTransPage extends GetView<HomeController> {
                         height: double.infinity,
                         child: GoogleMap(
                           initialCameraPosition:
-                          CameraPosition(target: hController.initialPosition, zoom: 14),
+                          CameraPosition(target: hController.initialPosition.value , zoom: 14),
                           myLocationEnabled: true,
                           myLocationButtonEnabled: true,
                           markers: markers,
+                          polylines: Set<Polyline>.of(polylines.values),
                           onMapCreated: _onMapCreated,
                         )),
                     SafeArea(
@@ -119,7 +120,7 @@ class ResumeTransPage extends GetView<HomeController> {
                                                               Navigator.of(context)
                                                                   .pop();
                                                             },
-                                                            initialPosition:hController.initialPosition,
+                                                            initialPosition:hController.initialPosition.value,
                                                             useCurrentLocation: true,
                                                             selectInitialPosition:
                                                             true,
@@ -162,7 +163,7 @@ class ResumeTransPage extends GetView<HomeController> {
                                                               Navigator.of(context)
                                                                   .pop();
                                                             },
-                                                            initialPosition:hController.initialPosition,
+                                                            initialPosition:controller.initialPosition.value ,
                                                             useCurrentLocation: true,
                                                             selectInitialPosition:
                                                             true,
@@ -180,7 +181,6 @@ class ResumeTransPage extends GetView<HomeController> {
                                                 ),
                                               ),
                                             ),
-
                                             Align(
                                               alignment: Alignment.bottomCenter,
                                               child: Container(
