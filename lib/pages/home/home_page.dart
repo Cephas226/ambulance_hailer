@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:getx_app/pages/components/menu.dart';
 import 'package:getx_app/pages/home/resumeTransaction.dart';
 import 'package:getx_app/pages/trip/cancel_trip.dart';
+import 'package:getx_app/pages/trip/payment_dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
@@ -541,7 +542,11 @@ class _HomePageState extends State<HomePage> {
                                                       BorderRadius.circular(
                                                           10.0)),
                                                   onPressed: () {
-                                                    Get.to(CancelTripPage());
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return PaymentDialog();
+                                                        });
                                                   },
                                                   color: Colors.orange,
                                                   textColor: Colors.white,
