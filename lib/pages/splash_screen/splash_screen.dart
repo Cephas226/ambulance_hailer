@@ -22,12 +22,11 @@ class SplashScreen extends GetView<SplashScreenController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          height: 100,
+                          height: 400,
                           decoration: BoxDecoration(
                               image: DecorationImage(image: AssetImage("images/ic_logo.png"),)
                           ),
                         ),
-                        Text("Safety and comforts is our concerns",style: CustomTextStyle.regularTextStyle,)
                       ],
                     ),
                   );

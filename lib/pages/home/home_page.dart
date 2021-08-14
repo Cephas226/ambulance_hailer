@@ -15,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:geolocator/geolocator.dart';
+
 import 'home_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,8 +35,8 @@ class _HomePageState extends State<HomePage> {
   LatLng initialPosition=LatLng(33.609434051916494, -7.623460799015407);
   GoogleMapController mapController;
   BitmapDescriptor bitmapDescriptor;
-  CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-  //HomeController hController = Get.put(HomeController());
+  CameraPosition _initialLocation = CameraPosition(target: LatLng(33.609434051916494, -7.623460799015407));
+  HomeController hController = Get.put(HomeController());
   String _placeDistance;
   String _startAddress = '';
   String _destinationAddress = '';
@@ -44,11 +45,11 @@ class _HomePageState extends State<HomePage> {
   PolylinePoints polylinePoints;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  void _onMapCreated(GoogleMapController mapController) {
-    this.mapController = mapController;
-  }
-
+  Set<Circle> circles = Set.from([Circle(
+    circleId: CircleId('circle_id_${DateTime.now().millisecondsSinceEpoch}'),
+    center: LatLng(33.609434051916494, -7.623460799015407),
+    radius: 40,
+  )]);
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses
@@ -100,6 +101,51 @@ class _HomePageState extends State<HomePage> {
       markers.add(startMarker);
       markers.add(destinationMarker);
 
+      markers.add(Marker( //add first marker
+        markerId: MarkerId(initialPosition.toString()+1.0.toString()),
+        position: LatLng(33.609434051916494, -7.623460799015407),
+        infoWindow: InfoWindow( //popup info
+          title: 'Marker Title First ',
+          snippet: 'My Custom Subtitle',
+        ),
+        icon: await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png') //Icon for Marker
+      ));
+
+      markers.add(Marker( //add second marker
+        markerId: MarkerId(initialPosition.toString()+2.0.toString()),
+        position: LatLng(33.589939805473726, -7.591033264638604),
+        infoWindow: InfoWindow( //popup info
+          title: 'Marker Title Second ',
+          snippet: 'My Custom Subtitle',
+        ),
+        icon:  await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png')
+        , //Icon for Marker
+      ));
+
+      markers.add(Marker( //add second marker
+        markerId: MarkerId(initialPosition.toString()+3.0.toString()),
+        position: LatLng(33.599924400228765, -7.612786721808061),
+        infoWindow: InfoWindow( //popup info
+          title: 'Marker Title Second ',
+          snippet: 'My Custom Subtitle',
+        ),
+        icon:  await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png')
+        , //Icon for Marker
+      ));
+      markers.add(Marker( //add second marker
+        markerId: MarkerId(initialPosition.toString()+4.0.toString()),
+        position: LatLng(33.58414632897516, -7.623243031941734),
+        infoWindow: InfoWindow( //popup info
+          title: 'Marker Title Second ',
+          snippet: 'My Custom Subtitle',
+        ),
+        icon:  await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png')
+        , //Icon for Marker
+      ));
       print(
         'START COORDINATES: ($startLatitude, $startLongitude)',
       );
@@ -273,7 +319,6 @@ class _HomePageState extends State<HomePage> {
             child: GetBuilder<HomeController>(
               builder: (controller) {
                 return Container(
-
                     child: Stack(children: <Widget>[
                   Container(
                       height: double.infinity,
@@ -334,7 +379,7 @@ class _HomePageState extends State<HomePage> {
                                         focusNode: startAddressFocusNode,
                                         readOnly: true,
                                         onTap:() async {
-                                          Navigator.push(
+                                          /*Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
@@ -358,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                                                     selectInitialPosition: true,
                                                   ),
                                             ),
-                                          );
+                                          );*/
                                         },
                                         decoration: const InputDecoration(
                                           labelStyle:
@@ -421,12 +466,8 @@ class _HomePageState extends State<HomePage> {
                                                           );
                                                         }
                                                       });
-                                                      print(result
-                                                          .formattedAddress);
-                                                      destinationAddressController
-                                                          .text =
-                                                          result.formattedAddress;
                                                       Navigator.of(context).pop();
+                                                      destinationAddressController.text=result.formattedAddress;
                                                       _destinationAddress = destinationAddressController.toString();
                                                     },
                                                     initialPosition: initialPosition,
@@ -521,67 +562,82 @@ class _HomePageState extends State<HomePage> {
                                                   topRight: Radius.circular(20.0)),
                                               color: Colors.grey.shade900,
                                             ),
-                                            child: Row(
-                                              children: <Widget>[
-                                                Text(
-                                                 "Price :"+" \$35.99",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 18.0),
-                                                ),
-                                                const SizedBox(width: 20.0),
-                                                Spacer(),
-                                                RaisedButton(
-                                                  padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 16.0),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0)),
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return PaymentDialog();
-                                                        });
-                                                  },
-                                                  color: Colors.orange,
-                                                  textColor: Colors.white,
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        "Validate",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            fontSize: 16.0),
-                                                      ),
-                                                      const SizedBox(width: 20.0),
-                                                      Container(
-                                                        padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                        child: Icon(
-                                                          Icons.arrow_forward_ios,
-                                                          color: Colors.orange,
-                                                          size: 16.0,
-                                                        ),
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                10.0)),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                            child:
+                                           Column(
+                                             children: [
+                                               Row(
+                                                 children: <Widget>[
+                                                   Text(
+                                                     "Distance :"+"$_placeDistance km",
+                                                     style: TextStyle(
+                                                         color: Colors.white,
+                                                         fontWeight: FontWeight.bold,
+                                                         fontSize: 18.0),
+                                                   ),
+                                                 ],
+                                               ),
+                                               Row(
+                                                 children: <Widget>[
+                                                   Text(
+                                                     "Price :"+" \$35.99",
+                                                     style: TextStyle(
+                                                         color: Colors.white,
+                                                         fontWeight: FontWeight.bold,
+                                                         fontSize: 18.0),
+                                                   ),
+                                                   Spacer(),
+                                                   RaisedButton(
+                                                     padding:
+                                                     const EdgeInsets.symmetric(
+                                                         vertical: 8.0,
+                                                         horizontal: 16.0),
+                                                     shape: RoundedRectangleBorder(
+                                                         borderRadius:
+                                                         BorderRadius.circular(
+                                                             10.0)),
+                                                     onPressed: () {
+                                                       showDialog(
+                                                           context: context,
+                                                           builder: (context) {
+                                                             return PaymentDialog();
+                                                           });
+                                                     },
+                                                     color: Colors.red,
+                                                     textColor: Colors.white,
+                                                     child: Row(
+                                                       mainAxisSize: MainAxisSize.min,
+                                                       children: <Widget>[
+                                                         Text(
+                                                           "Validate",
+                                                           style: TextStyle(
+                                                               fontWeight:
+                                                               FontWeight.bold,
+                                                               fontSize: 16.0),
+                                                         ),
+                                                         const SizedBox(width: 20.0),
+                                                         Container(
+                                                           padding:
+                                                           const EdgeInsets.all(
+                                                               8.0),
+                                                           child: Icon(
+                                                             Icons.arrow_forward_ios,
+                                                             color: Colors.red,
+                                                             size: 16.0,
+                                                           ),
+                                                           decoration: BoxDecoration(
+                                                               color: Colors.white,
+                                                               borderRadius:
+                                                               BorderRadius
+                                                                   .circular(
+                                                                   10.0)),
+                                                         )
+                                                       ],
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                             ],
+                                           )
                                           ),
                                         )
                                       ],

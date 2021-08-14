@@ -142,7 +142,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                           margin: EdgeInsets.only(right: 10),
                           height: 40,
                           decoration: BoxDecoration(
-                              color: Colors.amber, shape: BoxShape.circle),
+                              color: Colors.red, shape: BoxShape.circle),
                           child: Icon(
                             Icons.arrow_forward,
                             color: Colors.white,

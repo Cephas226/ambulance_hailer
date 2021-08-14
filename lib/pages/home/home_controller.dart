@@ -19,7 +19,7 @@ class HomeController extends GetxController {
   Completer<GoogleMapController> _controller = Completer();
   Set<Polyline> _polyLines = {};
   Set<Polyline> get polyLines => _polyLines;
-  Set<Marker> _markers = {};
+  Set<Marker> markers = {};
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
   GoogleMapsServices _googleMapsServices = GoogleMapsServices();
@@ -27,6 +27,9 @@ class HomeController extends GetxController {
   Marker origin;
   Marker destination;
   Directions info;
+
+  // ---
+  BitmapDescriptor carPin;
 
   @override
   void dispose() {
@@ -42,103 +45,41 @@ class HomeController extends GetxController {
 
   void onMapCreated(GoogleMapController mapController) {
     mapController = mapController;
-    //mapController.setMapStyle(Utils.mapStyles);
-   // _controller.complete(mapController);
-   // setMapPins();
-   // setPolylines();
+    update();
   }
-  void createRoute(String decodeRoute) {
-    print(decodeRoute);
-    _polyLines = {};
-    var uuid = new Uuid();
-    String polyId = uuid.v1();
-    _polyLines.add(Polyline(
-        polylineId: PolylineId(polyId),
-        width: 8,
-        color: Colors.black,
-        onTap: () {},
-        points: _convertToLatLng(_decodePoly(decodeRoute))));
-    print(_polyLines);
-  }
-  List<LatLng> _convertToLatLng(List points) {
-    List<LatLng> result = <LatLng>[];
-    for (int i = 0; i < points.length; i++) {
-      if (i % 2 != 0) {
-        result.add(LatLng(points[i - 1], points[i]));
-      }
-    }
-    return result;
-  }
-  void sendRequest(String intendedLocation) async {
-    List<Location> Placemark = await locationFromAddress(intendedLocation);
-    double latitude = Placemark[0].latitude;
-    double longitude = Placemark[0].longitude;
-    LatLng destination = LatLng(latitude, longitude);
-   // _addMarker(destination, intendedLocation);
-    String route = await _googleMapsServices.getRouteCoordinates(
-        initialPosition.value, destination);
-    createRoute(route);
-    print(route);
-  }
-  void _addMarker(LatLng location, String address) {
-   /* _markers.add(Marker(
-        markerId: MarkerId(_lastPosition.toString()),
-        position: location,
-        infoWindow: InfoWindow(title: address, snippet: "go here"),
-        icon: BitmapDescriptor.defaultMarker));*/
-  }
-  List _decodePoly(String poly) {
-    var list = poly.codeUnits;
-    var lList = new List();
-    int index = 0;
-    int len = poly.length;
-    int c = 0;
-// repeating until all attributes are decoded
-    do {
-      var shift = 0;
-      int result = 0;
+  Set<Marker> getmarkers() { //markers to place on map
+    markers.add(Marker( //add first marker
+      markerId: MarkerId(initialPosition.value.toString()),
+      position: initialPosition.value, //position of marker
+      infoWindow: InfoWindow( //popup info
+        title: 'Marker Title First ',
+        snippet: 'My Custom Subtitle',
+      ),
+      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+    ));
 
-      // for decoding value of one attribute
-      do {
-        c = list[index] - 63;
-        result |= (c & 0x1F) << (shift * 5);
-        index++;
-        shift++;
-      } while (c >= 32);
-      /* if value is negetive then bitwise not the value */
-      if (result & 1 == 1) {
-        result = ~result;
-      }
-      var result1 = (result >> 1) * 0.00001;
-      lList.add(result1);
-    } while (index < len);
+    markers.add(Marker( //add second marker
+      markerId: MarkerId(initialPosition.value.toString()),
+      position: LatLng(27.7099116, 85.3132343), //position of marker
+      infoWindow: InfoWindow( //popup info
+        title: 'Marker Title Second ',
+        snippet: 'My Custom Subtitle',
+      ),
+      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+    ));
 
-/*adding to previous value as done in encoding */
-    for (var i = 2; i < lList.length; i++) lList[i] += lList[i - 2];
-
-    print(lList.toString());
-
-    return lList;
+    markers.add(Marker( //add third marker
+      markerId: MarkerId(initialPosition.value.toString()),
+      position: LatLng(27.7137735, 85.315626), //position of marker
+      infoWindow: InfoWindow( //popup info
+        title: 'Marker Title Third ',
+        snippet: 'My Custom Subtitle',
+      ),
+      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+    ));
+    return markers;
   }
-/*  void setMapPins() {
 
-      _markers.add(Marker(
-          markerId: MarkerId('sourcePin'),
-          position:_initialPosition,
-          icon: sourceIcon));
-      // destination pin
-      _markers.add(Marker(
-          markerId: MarkerId('destPin'),
-          position: DEST_LOCATION,
-          icon: destinationIcon));
-  }
-  void setSourceAndDestinationIcons() async {
-    sourceIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5), 'assets/driving_pin.png');
-    destinationIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/destination_map_marker.png');
-  }*/
   void _getUserLocation() async {
     print("GET USER METHOD RUNNING =========");
    Position position = await Geolocator.getCurrentPosition();
@@ -160,167 +101,4 @@ class HomeController extends GetxController {
       }
     });
   }
-}
-
-class Utils {
-  static String mapStyles = '''[
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#f5f5f5"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.icon",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#616161"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#f5f5f5"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#bdbdbd"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#eeeeee"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#e5e5e5"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#ffffff"
-      }
-    ]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dadada"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#616161"
-      }
-    ]
-  },
-  {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#e5e5e5"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.station",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#eeeeee"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#c9c9c9"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  }
-]''';
 }
