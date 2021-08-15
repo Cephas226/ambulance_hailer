@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getx_app/pages/account/account_page.dart';
-import 'package:getx_app/pages/alerts/pickup_user_page.dart';
 import 'package:getx_app/pages/home/home_page.dart';
-import 'package:getx_app/pages/posts/posts_page.dart';
 
 import 'dashboard_controller.dart';
 
@@ -19,9 +16,6 @@ class DashboardPage extends StatelessWidget {
               index: controller.tabIndex,
               children: [
                 HomePage(),
-                PostsPage(),
-                PickupUserPage(),
-                AccountPage(),
               ],
             ),
           ),

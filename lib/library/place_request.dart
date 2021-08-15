@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:getx_app/library/configMaps.dart';
+import 'package:getx_app/models/allUsers.dart';
 import 'package:getx_app/models/directions_model.dart';
 import 'package:getx_app/models/route.dart';
 import 'package:http/http.dart' as http;
@@ -118,6 +122,7 @@ class GoogleMapsServices{
     http.Response response = await http.get(url);
     Map values = jsonDecode(response.body);
     return values["routes"][0]["overview_polyline"]["points"];
+
   }
   Future<RouteModel> getRouteByCoordinates(LatLng l1, LatLng l2) async {
     String url =
@@ -133,6 +138,17 @@ class GoogleMapsServices{
         endAddress: legs['end_address'],
         startAddress: legs['end_address']);
     return route;
+  }
+  static void getCurrentOnLineUserInfo() async {
+    firebaseUser = await FirebaseAuth.instance.currentUser;
+    String userId = firebaseUser.uid;
+    DatabaseReference reference = FirebaseDatabase.instance.reference().child("users").child(userId);
+
+    reference.once().then((DataSnapshot dataSnapShot){
+      if (dataSnapShot.value!=null){
+        userCurrentInfo  = Users.fromSnapshot(dataSnapShot);
+      }
+    });
   }
 }
 class DirectionsRepository {
@@ -162,5 +178,6 @@ class DirectionsRepository {
     }
     return null;
   }
+
 }
 

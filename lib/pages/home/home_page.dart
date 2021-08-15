@@ -1,15 +1,19 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
+import 'package:getx_app/library/configMaps.dart';
+import 'package:getx_app/library/place_request.dart';
+import 'package:getx_app/pages/DataHandler/appData.dart';
 import 'package:getx_app/pages/components/menu.dart';
 import 'package:getx_app/pages/home/resumeTransaction.dart';
-import 'package:getx_app/pages/trip/cancel_trip.dart';
+import 'package:getx_app/pages/trip/request_driver_trip.dart';
 import 'package:getx_app/pages/trip/payment_dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -17,6 +21,7 @@ import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'home_controller.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   // var initialPosition = LatLng(33.609434051916494, -7.623460799015407);
@@ -32,10 +37,11 @@ class _HomePageState extends State<HomePage> {
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
   Set<Marker> markers = new Set();
-  LatLng initialPosition=LatLng(33.609434051916494, -7.623460799015407);
+  LatLng initialPosition = LatLng(33.609434051916494, -7.623460799015407);
   GoogleMapController mapController;
   BitmapDescriptor bitmapDescriptor;
-  CameraPosition _initialLocation = CameraPosition(target: LatLng(33.609434051916494, -7.623460799015407));
+  CameraPosition _initialLocation =
+      CameraPosition(target: LatLng(33.609434051916494, -7.623460799015407));
   HomeController hController = Get.put(HomeController());
   String _placeDistance;
   String _startAddress = '';
@@ -43,13 +49,49 @@ class _HomePageState extends State<HomePage> {
   String _currentAddress = '';
   Position _currentPosition;
   PolylinePoints polylinePoints;
-
+  bool hideValide;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  Set<Circle> circles = Set.from([Circle(
-    circleId: CircleId('circle_id_${DateTime.now().millisecondsSinceEpoch}'),
-    center: LatLng(33.609434051916494, -7.623460799015407),
-    radius: 40,
-  )]);
+
+  DatabaseReference rideRequestRef;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+    GoogleMapsServices.getCurrentOnLineUserInfo();
+  }
+
+  void saveRideRequest() {
+    rideRequestRef =
+        FirebaseDatabase.instance.reference().child("Ride Requests").push();
+
+    var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
+    var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
+
+    Map pickUpLocMap = {
+      "latitude": pickUp.latitude.toString(),
+      "longitude": pickUp.longitude.toString(),
+    };
+    Map dropOffMap = {
+      "latitude": dropOff.latitude.toString(),
+      "longitude": dropOff.longitude.toString(),
+    };
+    Map rideInfoMap = {
+      "driver_in": "waiting",
+      "payment_method":"cash",
+      "pickup":pickUpLocMap,
+      "drop":dropOff,
+      "created_at":DateTime.now().toString(),
+      "rider_name":userCurrentInfo.name,
+      "rider_phone":userCurrentInfo.phone,
+      "pickup_address":pickUp.placeName,
+      "dropoff_address":dropOff.placeName
+    };
+    rideRequestRef.push().set(rideInfoMap);
+  }
+  void cancelRideRequest(){
+    rideRequestRef.remove();
+  }
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses
@@ -101,57 +143,60 @@ class _HomePageState extends State<HomePage> {
       markers.add(startMarker);
       markers.add(destinationMarker);
 
-      markers.add(Marker( //add first marker
-        markerId: MarkerId(initialPosition.toString()+1.0.toString()),
-        position: LatLng(33.609434051916494, -7.623460799015407),
-        infoWindow: InfoWindow( //popup info
-          title: 'Marker Title First ',
+      markers.add(Marker(
+          //add first marker
+          markerId: MarkerId(initialPosition.toString() + 1.0.toString()),
+          position: LatLng(33.609434051916494, -7.623460799015407),
+          infoWindow: InfoWindow(
+            //popup info
+            title: 'Marker Title First ',
+            snippet: 'My Custom Subtitle',
+          ),
+          icon: await BitmapDescriptor.fromAssetImage(
+              ImageConfiguration(devicePixelRatio: 1.5),
+              'images/taxi.png') //Icon for Marker
+          ));
+
+      markers.add(Marker(
+        //add second marker
+        markerId: MarkerId(initialPosition.toString() + 2.0.toString()),
+        position: LatLng(33.589939805473726, -7.591033264638604),
+        infoWindow: InfoWindow(
+          //popup info
+          title: 'Marker Title Second ',
           snippet: 'My Custom Subtitle',
         ),
         icon: await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png') //Icon for Marker
+            ImageConfiguration(devicePixelRatio: 1.5),
+            'images/taxi.png'), //Icon for Marker
       ));
 
-      markers.add(Marker( //add second marker
-        markerId: MarkerId(initialPosition.toString()+2.0.toString()),
-        position: LatLng(33.589939805473726, -7.591033264638604),
-        infoWindow: InfoWindow( //popup info
-          title: 'Marker Title Second ',
-          snippet: 'My Custom Subtitle',
-        ),
-        icon:  await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png')
-        , //Icon for Marker
-      ));
-
-      markers.add(Marker( //add second marker
-        markerId: MarkerId(initialPosition.toString()+3.0.toString()),
+      markers.add(Marker(
+        //add second marker
+        markerId: MarkerId(initialPosition.toString() + 3.0.toString()),
         position: LatLng(33.599924400228765, -7.612786721808061),
-        infoWindow: InfoWindow( //popup info
+        infoWindow: InfoWindow(
+          //popup info
           title: 'Marker Title Second ',
           snippet: 'My Custom Subtitle',
         ),
-        icon:  await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png')
-        , //Icon for Marker
+        icon: await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5),
+            'images/taxi.png'), //Icon for Marker
       ));
-      markers.add(Marker( //add second marker
-        markerId: MarkerId(initialPosition.toString()+4.0.toString()),
+      markers.add(Marker(
+        //add second marker
+        markerId: MarkerId(initialPosition.toString() + 4.0.toString()),
         position: LatLng(33.58414632897516, -7.623243031941734),
-        infoWindow: InfoWindow( //popup info
+        infoWindow: InfoWindow(
+          //popup info
           title: 'Marker Title Second ',
           snippet: 'My Custom Subtitle',
         ),
-        icon:  await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 2.5), 'images/taxi.png')
-        , //Icon for Marker
+        icon: await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5),
+            'images/taxi.png'), //Icon for Marker
       ));
-      print(
-        'START COORDINATES: ($startLatitude, $startLongitude)',
-      );
-      print(
-        'DESTINATION COORDINATES: ($destinationLatitude, $destinationLongitude)',
-      );
 
       // Calculating to check that the position relative
       // to the frame, and pan & zoom the camera accordingly.
@@ -263,12 +308,6 @@ class _HomePageState extends State<HomePage> {
     polylines[id] = polyline;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
   _getCurrentLocation() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) async {
@@ -336,50 +375,48 @@ class _HomePageState extends State<HomePage> {
                         },
                       )),
                   SafeArea(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child:
-                          Padding(
-                            padding: const EdgeInsets.only(top: 30.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                              ),
-                              width: size.width * 0.9,
-                              child:
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text("WHERE ARE YOU GOING ?",
-                                        style: GoogleFonts.nunito(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              letterSpacing: .1),
-                                          fontSize: 20,
-                                          fontWeight:
-                                          FontWeight.w900,
-                                        )),
-                                    SizedBox(height: 10),
-                                    Container(
-                                      padding: EdgeInsets.all(5),
-                                      child: TextFormField(
-                                        style: GoogleFonts.nunito(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              letterSpacing: .1),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        controller: startAddressController,
-                                        focusNode: startAddressFocusNode,
-                                        readOnly: true,
-                                        onTap:() async {
-                                          /*Navigator.push(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20.0),
+                            ),
+                          ),
+                          width: size.width * 0.9,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text("WHERE ARE YOU GOING ?",
+                                    style: GoogleFonts.nunito(
+                                      textStyle: TextStyle(
+                                          color: Colors.black,
+                                          letterSpacing: .1),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w900,
+                                    )),
+                                SizedBox(height: 10),
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: TextFormField(
+                                    style: GoogleFonts.nunito(
+                                      textStyle: TextStyle(
+                                          color: Colors.black,
+                                          letterSpacing: .1),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    controller: startAddressController,
+                                    focusNode: startAddressFocusNode,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      /*Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
@@ -404,90 +441,96 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                             ),
                                           );*/
-                                        },
-                                        decoration: const InputDecoration(
-                                          labelStyle:
+                                    },
+                                    decoration: const InputDecoration(
+                                      labelStyle:
                                           TextStyle(color: Colors.black),
-                                          icon: FaIcon(
-                                              FontAwesomeIcons.locationArrow,
-                                              color: Colors.black),
-                                          labelText: 'Actual position',
-                                        ),
-                                      ),
+                                      icon: FaIcon(
+                                          FontAwesomeIcons.locationArrow,
+                                          color: Colors.black),
+                                      labelText: 'Actual position',
                                     ),
-                                    Container(
-                                      padding: EdgeInsets.all(5),
-                                      child: TextFormField(
-                                        style: GoogleFonts.nunito(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              letterSpacing: .1),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        controller: destinationAddressController,
-                                        readOnly: true,
-                                        onTap: () async {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PlacePicker(
-                                                    apiKey:
-                                                    "AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE", // Put YOUR OWN KEY here.
-                                                    onPlacePicked: (result) {
-                                                      startAddressFocusNode.unfocus();
-                                                      desrinationAddressFocusNode.unfocus();
-                                                      setState(() {
-                                                        if (markers.isNotEmpty) markers.clear();
-                                                        if (polylines.isNotEmpty)
-                                                          polylines.clear();
-                                                        if (polylineCoordinates.isNotEmpty)
-                                                          polylineCoordinates.clear();
-                                                        _placeDistance = null;
-                                                      });
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: TextFormField(
+                                    style: GoogleFonts.nunito(
+                                      textStyle: TextStyle(
+                                          color: Colors.black,
+                                          letterSpacing: .1),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    controller: destinationAddressController,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PlacePicker(
+                                            apiKey:
+                                                "AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE", // Put YOUR OWN KEY here.
+                                            onPlacePicked: (result) {
+                                              startAddressFocusNode.unfocus();
+                                              desrinationAddressFocusNode
+                                                  .unfocus();
+                                              setState(() {
+                                                if (markers.isNotEmpty)
+                                                  markers.clear();
+                                                if (polylines.isNotEmpty)
+                                                  polylines.clear();
+                                                if (polylineCoordinates
+                                                    .isNotEmpty)
+                                                  polylineCoordinates.clear();
+                                                _placeDistance = null;
+                                              });
 
-                                                      _calculateDistance().then((isCalculated) {
-                                                        if (isCalculated) {
-                                                          ScaffoldMessenger.of(context)
-                                                              .showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                  'Distance Calculated Sucessfully'),
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          ScaffoldMessenger.of(context)
-                                                              .showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                  'Error Calculating Distance'),
-                                                            ),
-                                                          );
-                                                        }
-                                                      });
-                                                      Navigator.of(context).pop();
-                                                      destinationAddressController.text=result.formattedAddress;
-                                                      _destinationAddress = destinationAddressController.toString();
-                                                    },
-                                                    initialPosition: initialPosition,
-                                                    useCurrentLocation: true,
-                                                    selectInitialPosition: true,
-                                                  ),
-                                            ),
-                                          );
-                                        },
-                                        decoration: const InputDecoration(
-                                          labelStyle:
-                                          TextStyle(color: Colors.black),
-                                          icon: FaIcon(
-                                              FontAwesomeIcons.search,
-                                              color: Colors.black),
-                                          labelText: 'Choose a destination',
+                                              _calculateDistance()
+                                                  .then((isCalculated) {
+                                                if (isCalculated) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Distance Calculated Sucessfully'),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Error Calculating Distance'),
+                                                    ),
+                                                  );
+                                                }
+                                              });
+                                              Navigator.of(context).pop();
+                                              destinationAddressController
+                                                      .text =
+                                                  result.formattedAddress;
+                                              _destinationAddress =
+                                                  destinationAddressController
+                                                      .toString();
+                                            },
+                                            initialPosition: initialPosition,
+                                            useCurrentLocation: true,
+                                            selectInitialPosition: true,
+                                          ),
                                         ),
-                                      ),
+                                      );
+                                    },
+                                    decoration: const InputDecoration(
+                                      labelStyle:
+                                          TextStyle(color: Colors.black),
+                                      icon: FaIcon(FontAwesomeIcons.search,
+                                          color: Colors.black),
+                                      labelText: 'Choose a destination',
                                     ),
-                                    /*Visibility(
+                                  ),
+                                ),
+                                /*Visibility(
                                       visible: _placeDistance == null ? false : true,
                                       child: Text(
                                         'DISTANCE: $_placeDistance km',
@@ -497,13 +540,13 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ),*/
-                                  ],
-                                ),
-                              ),
+                              ],
                             ),
                           ),
                         ),
                       ),
+                    ),
+                  ),
                   SafeArea(
                       child: Column(
                     children: <Widget>[
@@ -524,7 +567,7 @@ class _HomePageState extends State<HomePage> {
                       Spacer(),
                       Visibility(
                         visible: _destinationAddress == '' ? false : true,
-                        child:Container(
+                        child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
                                 color: Colors.white),
@@ -539,106 +582,124 @@ class _HomePageState extends State<HomePage> {
                                       children: <Widget>[
                                         Container(
                                           padding: EdgeInsets.all(10),
-                                          child: Row(
-                                              children: [
-                                                Text("👋 Hello Cephas ZOUBGA",
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          letterSpacing: .1),
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                      FontWeight.w900,
-                                                    ))
-                                              ]),
+                                          child: Row(children: [
+                                            Text("👋 Hello Cephas ZOUBGA",
+                                                style: GoogleFonts.nunito(
+                                                  textStyle: TextStyle(
+                                                      color: Colors.black,
+                                                      letterSpacing: .1),
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w900,
+                                                ))
+                                          ]),
                                         ),
                                         Align(
                                           alignment: Alignment.bottomCenter,
                                           child: Container(
-                                            padding: const EdgeInsets.all(32.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(20.0),
-                                                  topRight: Radius.circular(20.0)),
-                                              color: Colors.grey.shade900,
-                                            ),
-                                            child:
-                                           Column(
-                                             children: [
-                                               Row(
-                                                 children: <Widget>[
-                                                   Text(
-                                                     "Distance :"+"$_placeDistance km",
-                                                     style: TextStyle(
-                                                         color: Colors.white,
-                                                         fontWeight: FontWeight.bold,
-                                                         fontSize: 18.0),
-                                                   ),
-                                                 ],
-                                               ),
-                                               Row(
-                                                 children: <Widget>[
-                                                   Text(
-                                                     "Price :"+" \$35.99",
-                                                     style: TextStyle(
-                                                         color: Colors.white,
-                                                         fontWeight: FontWeight.bold,
-                                                         fontSize: 18.0),
-                                                   ),
-                                                   Spacer(),
-                                                   RaisedButton(
-                                                     padding:
-                                                     const EdgeInsets.symmetric(
-                                                         vertical: 8.0,
-                                                         horizontal: 16.0),
-                                                     shape: RoundedRectangleBorder(
-                                                         borderRadius:
-                                                         BorderRadius.circular(
-                                                             10.0)),
-                                                     onPressed: () {
-                                                       showDialog(
+                                              padding:
+                                                  const EdgeInsets.all(32.0),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(20.0),
+                                                    topRight:
+                                                        Radius.circular(20.0)),
+                                                color: Colors.grey.shade900,
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "Distance :" +
+                                                            "$_placeDistance km",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 18.0),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "Price :" + " \$35.99",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 18.0),
+                                                      ),
+                                                      Spacer(),
+                                                      RaisedButton(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 8.0,
+                                                                horizontal:
+                                                                    16.0),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                        onPressed: () {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return RequestTripPage();
+                                                              });
+                                                          /* showDialog(
                                                            context: context,
                                                            builder: (context) {
-                                                             return PaymentDialog();
-                                                           });
-                                                     },
-                                                     color: Colors.red,
-                                                     textColor: Colors.white,
-                                                     child: Row(
-                                                       mainAxisSize: MainAxisSize.min,
-                                                       children: <Widget>[
-                                                         Text(
-                                                           "Validate",
-                                                           style: TextStyle(
-                                                               fontWeight:
-                                                               FontWeight.bold,
-                                                               fontSize: 16.0),
-                                                         ),
-                                                         const SizedBox(width: 20.0),
-                                                         Container(
-                                                           padding:
-                                                           const EdgeInsets.all(
-                                                               8.0),
-                                                           child: Icon(
-                                                             Icons.arrow_forward_ios,
-                                                             color: Colors.red,
-                                                             size: 16.0,
-                                                           ),
-                                                           decoration: BoxDecoration(
-                                                               color: Colors.white,
-                                                               borderRadius:
-                                                               BorderRadius
-                                                                   .circular(
-                                                                   10.0)),
-                                                         )
-                                                       ],
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                             ],
-                                           )
-                                          ),
+                                                             return RequestTripPage();
+                                                           });*/
+                                                        },
+                                                        color: Colors.red,
+                                                        textColor: Colors.white,
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              "Validate",
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      16.0),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 20.0),
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios,
+                                                                color:
+                                                                    Colors.red,
+                                                                size: 16.0,
+                                                              ),
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10.0)),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              )),
                                         )
                                       ],
                                     ),
@@ -650,39 +711,40 @@ class _HomePageState extends State<HomePage> {
                     ],
                   )),
                   SafeArea(
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 10.0, bottom: 120.0),
-                            child: ClipOval(
-                              child: Material(
-                                color: Colors.orange.shade100, // button color
-                                child: InkWell(
-                                  splashColor: Colors.orange, // inkwell color
-                                  child: SizedBox(
-                                    width: 56,
-                                    height: 56,
-                                    child: Icon(Icons.my_location),
-                                  ),
-                                  onTap: () {
-                                    mapController.animateCamera(
-                                      CameraUpdate.newCameraPosition(
-                                        CameraPosition(
-                                          target: LatLng(
-                                            _currentPosition.latitude,
-                                            _currentPosition.longitude,
-                                          ),
-                                          zoom: 18.0,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(right: 10.0, bottom: 120.0),
+                        child: ClipOval(
+                          child: Material(
+                            color: Colors.orange.shade100, // button color
+                            child: InkWell(
+                              splashColor: Colors.orange, // inkwell color
+                              child: SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: Icon(Icons.my_location),
                               ),
+                              onTap: () {
+                                mapController.animateCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: LatLng(
+                                        _currentPosition.latitude,
+                                        _currentPosition.longitude,
+                                      ),
+                                      zoom: 18.0,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
                       ),
+                    ),
+                  ),
                 ]));
               },
             ),

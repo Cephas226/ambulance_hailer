@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:getx_app/pages/home/home_page.dart';
@@ -8,12 +9,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'driver_on_the_way.dart';
 
-class CancelTripPage extends StatefulWidget {
+class RequestTripPage extends StatefulWidget {
   @override
-  _CancelTripState createState() => _CancelTripState();
+  _RequestTripState createState() => _RequestTripState();
 }
 
-class _CancelTripState extends State<CancelTripPage> {
+class _RequestTripState extends State<RequestTripPage> {
   var _ahmedabad = LatLng(23.0225, 72.5714);
   var _ahmedabad1 = LatLng(23.038304, 72.511856);
   var _ahmedabad2 = LatLng(23.036769, 72.562601);
@@ -68,7 +69,8 @@ class _CancelTripState extends State<CancelTripPage> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Container(
+              child:
+              Container(
                 width: double.infinity,
                 height: 240,
                 child: Stack(
@@ -89,9 +91,9 @@ class _CancelTripState extends State<CancelTripPage> {
                           SizedBox(
                             height: 70,
                           ),
-                          Text(
-                            "Nihal Perera",
-                            style: CustomTextStyle.boldTextStyle,
+                          SpinKitThreeBounce(
+                            color: Colors.redAccent,
+                            size: 50.0,
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 4, right: 4, top: 2),
@@ -105,39 +107,20 @@ class _CancelTripState extends State<CancelTripPage> {
                             height: 8,
                           ),
                           Flexible(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 180,
-                                    margin: EdgeInsets.only(top: 16),
-                                    child: RaisedButton(
-                                      onPressed: () {
-                                        Get.to(DriverOnTheWay());
-                                      },
-                                      color: Colors.orange,
-                                      child: Text(
-                                        "Validate trip",
-                                        style: CustomTextStyle.mediumTextStyle,
-                                      ),
-                                    ),
+                              child:
+                              Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.only(top: 16),
+                                child: RaisedButton(
+                                  onPressed: () {
+                                    Get.off(HomePage());
+                                  },
+                                  color: Colors.red,
+                                  child: Text(
+                                    "Cancel Trip",
+                                    style: CustomTextStyle.mediumTextStyleWhite,
                                   ),
-                                  Container(
-                                    width: 180,
-                                    margin: EdgeInsets.only(top: 16),
-                                    child: RaisedButton(
-                                      onPressed: () {
-                                        Get.off(HomePage());
-                                      },
-                                      color: Colors.grey.shade200,
-                                      child: Text(
-                                        "Cancel Trip",
-                                        style: CustomTextStyle.mediumTextStyle,
-                                      ),
-                                    ),
-                                  )
-                                ],
+                                ),
                               )
                           )
                         ],
@@ -150,14 +133,15 @@ class _CancelTripState extends State<CancelTripPage> {
                         height: 100,
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage("images/driver.jpg")),
+                                image: AssetImage("images/taxi.png")),
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10))),
+                            BorderRadius.all(Radius.circular(10)),color: Colors.white),
                       ),
                     ),
                     Align(
                       alignment: Alignment.topCenter,
-                      child: Container(
+                      child:
+                      Container(
                         alignment: Alignment.topCenter,
                         child: Container(
                           width: 100,

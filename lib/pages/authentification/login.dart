@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:getx_app/pages/home/home_page.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 
 import 'connect_social_account.dart';
+import 'forgot_password.dart';
 import 'login_password.dart';
-
+import 'package:get/get.dart';
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -71,11 +73,11 @@ class _LoginState extends State<Login> {
                       SizedBox(height: 14),
                       Container(
                         alignment: Alignment.center,
-                        /*child: Image(
+                        child: Image(
                       image: AssetImage("images/ic_logo.png"),
-                      width: 80,
-                      height: 80,
-                    ),*/
+                          width: 90,
+                          height: 90,
+                    ),
                       ),
                       SizedBox(height: 14),
                       Container(
@@ -176,7 +178,98 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
+                      SizedBox(height: 20),
+                    /*  Container(
+                        margin: EdgeInsets.only(left: 16, top: 4),
+                        child: Text(
+                          "Enter your password ride with Kangaroo cabs",
+                          style: CustomTextStyle.regularTextStyle.copyWith(
+                              color: Colors.grey,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      SizedBox(height: 14),*/
+                      Container(
+                        margin: EdgeInsets.only(right: 14, left: 14),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: <Widget>[
+                                    TextField(
+                                      decoration: InputDecoration(
+                                        border: border,
+                                        enabledBorder: border,
+                                        focusedBorder: border,
+                                        contentPadding: EdgeInsets.only(
+                                            left: 8, right: 32, top: 6, bottom: 6),
+                                        hintText: "Enter your password",
+                                        hasFloatingPlaceholder: true,
+                                        hintStyle: CustomTextStyle.regularTextStyle
+                                            .copyWith(
+                                            color: Colors.grey, fontSize: 12),
+                                        labelStyle: CustomTextStyle.regularTextStyle
+                                            .copyWith(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
+                                      controller: _mobileNumberController,
+                                      keyboardType: TextInputType.text,
+                                      obscureText: isTextWritten,
+                                    ),
+                                    createClearText()
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey.shade400)),
+                              ),
+                              flex: 100,
+                            )
+                          ],
+                        ),
+                      ),
                       SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              Get.to( ForgotPassword());
+                            /*  Navigator.of(context).push(new MaterialPageRoute(
+                                  builder: (context) => ForgotPassword()));*/
+                            },
+                            child: Container(
+                              child: Text(
+                                "I forgot my password",
+                                style: CustomTextStyle.mediumTextStyle.copyWith(
+                                    color: Colors.grey.shade600, fontSize: 12),
+                              ),
+                              margin: EdgeInsets.only(left: 18),
+                            ),
+                          ),
+                         /* GestureDetector(
+                            onTap: (){
+                            *//*  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>HomePage()));*//*
+                            },
+                            child: Container(
+                              width: 40,
+                              margin: EdgeInsets.only(right: 10),
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: Colors.red, shape: BoxShape.circle),
+                              child: Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )*/
+                        ],
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -195,8 +288,7 @@ class _LoginState extends State<Login> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.of(context).push(new MaterialPageRoute(
-                                  builder: (context) => LoginPassword()));
+                             Get.to(HomePage());
                             },
                             child: Container(
                               width: 40,

@@ -47,11 +47,11 @@ class _LoginPasswordState extends State<LoginPassword> {
                   SizedBox(height: 14),
                   Container(
                     alignment: Alignment.center,
-                    /*child: Image(
+                    child: Image(
                       image: AssetImage("images/ic_logo.png"),
                       width: 80,
                       height: 80,
-                    ),*/
+                    ),
                   ),
                   SizedBox(height: 14),
                   Container(

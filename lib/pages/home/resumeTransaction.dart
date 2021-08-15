@@ -5,10 +5,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:getx_app/library/place_request.dart';
 import 'package:getx_app/models/canceltrip.dart';
-import 'package:getx_app/pages/alerts/pickup_user_page.dart';
 import 'package:getx_app/pages/components/menu.dart';
 import 'package:getx_app/pages/home/addressSearch.dart';
-import 'package:getx_app/pages/trip/cancel_trip.dart';
+import 'package:getx_app/pages/trip/request_driver_trip.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -212,7 +211,7 @@ class ResumeTransPage extends GetView<HomeController> {
                                                           BorderRadius.circular(
                                                               10.0)),
                                                       onPressed: () {
-                                                        Get.to(CancelTripPage());
+                                                        Get.to(RequestTripPage());
                                                       },
                                                       color: Colors.orange,
                                                       textColor: Colors.white,

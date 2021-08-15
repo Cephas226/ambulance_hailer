@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
-import 'cancel_trip.dart';
+import 'request_driver_trip.dart';
 import 'cancel_trip_feedback.dart';
 
 class DriverOnTheWay extends StatefulWidget {
