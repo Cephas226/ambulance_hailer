@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:getx_app/utils/CustomColors.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:getx_app/utils/DottedLine.dart';
 
@@ -13,7 +15,8 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: Container(
+      body:
+      Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -40,7 +43,7 @@ class _ProfileState extends State<Profile> {
                     alignment: Alignment.center,
                     child: Text(
                       "Profile",
-                      style: CustomTextStyle.mediumTextStyle.copyWith(fontSize: 14),
+                      style: CustomTextStyle.mediumTextStyle.copyWith(fontSize: 16),
                     ),
                   ),
                 )
@@ -54,7 +57,7 @@ class _ProfileState extends State<Profile> {
                     child: Text(
                       "CONTACT DETAILS",
                       style: CustomTextStyle.mediumTextStyle
-                          .copyWith(color: Colors.grey),
+                          .copyWith(color: Colors.red),
                     ),
                     margin: EdgeInsets.only(left: 16, top: 12),
                   ),
@@ -63,7 +66,7 @@ class _ProfileState extends State<Profile> {
                     child: Text(
                       "Name",
                       style: CustomTextStyle.regularTextStyle
-                          .copyWith(color: Colors.grey),
+                          .copyWith(color: Colors.red),
                     ),
                   ),
                   Row(
@@ -71,36 +74,17 @@ class _ProfileState extends State<Profile> {
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.only(left: 16),
-                        child: Text("Ishan Madushka",
+                        child: Text("Cephas ZOUBGA",
                             style: CustomTextStyle.mediumTextStyle),
                       ),
-                      GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.navigate_next, color: Colors.grey),
-                        ),
-                      )
                     ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 16, top: 12),
-                    child: Text(
-                      "Email",
-                      style: CustomTextStyle.regularTextStyle
-                          .copyWith(color: Colors.grey),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 16, top: 4),
-                    child: Text("ish.madushka@gmail.com",
-                        style: CustomTextStyle.mediumTextStyle),
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 16, top: 16),
                     child: Text(
                       "Mobile Number",
                       style: CustomTextStyle.regularTextStyle
-                          .copyWith(color: Colors.grey),
+                          .copyWith(color: Colors.red),
                     ),
                   ),
                   Row(
@@ -108,117 +92,85 @@ class _ProfileState extends State<Profile> {
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.only(left: 16),
-                        child: Text("+94 71 87 86 729",
+                        child: Text("+233 71 87 86 729",
                             style: CustomTextStyle.mediumTextStyle),
                       ),
-                      GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Icon(
-                            Icons.navigate_next,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      )
                     ],
-                  ),
-                  DottedLine(16,16,4),
-                  Container(
-                    child: Text(
-                      "SECURITY DETAILS",
-                      style: CustomTextStyle.mediumTextStyle
-                          .copyWith(color: Colors.grey),
-                    ),
-                    margin: EdgeInsets.only(left: 16, top: 12),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 16, top: 12),
-                    child: Text(
-                      "Password",
-                      style: CustomTextStyle.regularTextStyle
-                          .copyWith(color: Colors.grey),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 16),
-                        child: Text("Change Password",
-                            style: CustomTextStyle.mediumTextStyle),
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.navigate_next, color: Colors.grey),
-                        ),
-                      )
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 16, top: 12),
-                    child: Text(
-                      "Security Question",
-                      style: CustomTextStyle.regularTextStyle
-                          .copyWith(color: Colors.grey),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 16),
-                        child: Text("Change Security Question",
-                            style: CustomTextStyle.mediumTextStyle),
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.navigate_next, color: Colors.grey),
-                        ),
-                      )
-                    ],
-                  ),
-                  DottedLine(16,16,4),
-                  Container(
-                    child: Text(
-                      "LANGUAGE",
-                      style: CustomTextStyle.mediumTextStyle
-                          .copyWith(color: Colors.grey),
-                    ),
-                    margin: EdgeInsets.only(left: 16, top: 12),
                   ),
 
                   Container(
                     margin: EdgeInsets.only(left: 16, top: 12),
                     child: Text(
-                      "Select Language",
+                      "Email",
                       style: CustomTextStyle.regularTextStyle
-                          .copyWith(color: Colors.grey),
+                          .copyWith(color: Colors.red),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 16),
-                        child: Text("English",
-                            style: CustomTextStyle.mediumTextStyle),
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.navigate_next, color: Colors.grey),
-                        ),
-                      )
-                    ],
+                  Container(
+                    margin: EdgeInsets.only(left: 16, top: 4),
+                    child: Text("cephaszoubga@gmail.com",
+                        style: CustomTextStyle.mediumTextStyle),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 16, top: 12),
-                    child: Text(
-                      "Logout",
-                      style: CustomTextStyle.mediumTextStyle
-                          .copyWith(color: Colors.red),
+                    width: double.infinity,
+                    margin: EdgeInsets.only(right: 16, left: 16),
+                    child: RaisedButton(
+                      onPressed: () {},
+                      child: Text(
+                        "Connect with Google Account",
+                        style: CustomTextStyle.mediumTextStyle
+                            .copyWith(color: Colors.white, fontSize: 14),
+                      ),
+                      textColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(24))),
+                      color: CustomColors.COLOR_GOOGLE,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child:
+                    Padding(
+                      padding: const EdgeInsets.only(top: 400.0),
+                      child: InkWell(
+                        onTap: (){},
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FaIcon(FontAwesomeIcons.userLock,
+                                      color: Colors.redAccent),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Modify password",
+                                    style: CustomTextStyle.mediumTextStyle.copyWith(
+                                        color: Colors.black, fontSize: 20),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FaIcon(FontAwesomeIcons.signOutAlt,
+                                      color: Colors.redAccent),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Log out",
+                                    style: CustomTextStyle.mediumTextStyle.copyWith(
+                                        color: Colors.black, fontSize: 20),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
+                        ),
+                      ),
                     ),
                   ),
                 ],

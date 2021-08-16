@@ -1,28 +1,24 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:getx_app/pages/authentification/signup.dart';
+import 'package:getx_app/pages/home/home_controller.dart';
 import 'package:getx_app/pages/home/home_page.dart';
 import 'package:getx_app/utils/CustomColors.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import 'authentification_controller.dart';
 import 'connect_social_account.dart';
 import 'forgot_password.dart';
 import 'login_password.dart';
 import 'package:get/get.dart';
-class Login extends StatefulWidget {
+class SignUpPage extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _LoginState extends State<Login> {
+class _SignUpPageState extends State<SignUpPage> {
   var selectedItem;
-  TextEditingController _mobileNumberController = TextEditingController();
-  TextEditingController _mobileIndicatifController;
   bool isTextWritten = false;
-
   var selectedValue = "+233";
-
+  final AuthentificationController authentificationController = Get.put(AuthentificationController());
   createCountryCodeList() {
     List<DropdownMenuItem<String>> countryCodeList = new List();
     countryCodeList.add(createDropdownItem("+91"));
@@ -44,6 +40,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = Get.size;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -59,7 +56,8 @@ class _LoginState extends State<Login> {
                         bottomRight: Radius.circular(16),
                         bottomLeft: Radius.circular(16))),
                 margin: EdgeInsets.only(left: 0, right: 0, bottom: 4),
-                child: Container(
+                child:
+                Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(16),
@@ -70,7 +68,7 @@ class _LoginState extends State<Login> {
                         BoxShadow(color: Colors.grey.shade50, blurRadius: 5),
                       ]),
                   width: double.infinity,
-                  padding: EdgeInsets.only(top: 32),
+                  padding: EdgeInsets.only(top: 2),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -78,8 +76,8 @@ class _LoginState extends State<Login> {
                         alignment: Alignment.center,
                         child: Image(
                           image: AssetImage("images/ic_logo.png"),
-                          width: 250,
-                          height: 250,
+                          width: 150,
+                          height: 150,
                         ),
                       ),
                       SizedBox(height: 14),
@@ -98,16 +96,92 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.only(right: 14, left: 14),
                         child: Row(
                           children: <Widget>[
-                            /* Container(
-                              padding: EdgeInsets.only(
-                                  left: 8, right: 8, top: 4, bottom: 4),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(6)),
-                                  border:
-                                  Border.all(color: Colors.grey.shade400)),
-                              child: Text("+233"),
-                            ),*/
+                            Expanded(
+                              child: Container(
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: <Widget>[
+                                    TextField(
+                                      decoration: InputDecoration(
+                                        border: border,
+                                        enabledBorder: border,
+                                        focusedBorder: border,
+                                        contentPadding: EdgeInsets.only(
+                                            left: 8, right: 32, top: 6, bottom: 6),
+                                        hintText: "Your name",
+                                        hasFloatingPlaceholder: true,
+                                        hintStyle: CustomTextStyle.regularTextStyle
+                                            .copyWith(
+                                            color: Colors.grey, fontSize: 12),
+                                        labelStyle: CustomTextStyle.regularTextStyle
+                                            .copyWith(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
+                                      controller: authentificationController.nameController,
+                                      keyboardType: TextInputType.text,
+                                      obscureText: isTextWritten,
+                                    ),
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey.shade400)),
+                              ),
+                              flex: 100,
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 14),
+                      Container(
+                        margin: EdgeInsets.only(right: 14, left: 14),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: <Widget>[
+                                    TextField(
+                                      decoration: InputDecoration(
+                                        border: border,
+                                        enabledBorder: border,
+                                        focusedBorder: border,
+                                        contentPadding: EdgeInsets.only(
+                                            left: 8, right: 32, top: 6, bottom: 6),
+                                        hintText: "Your email",
+                                        hasFloatingPlaceholder: true,
+                                        hintStyle: CustomTextStyle.regularTextStyle
+                                            .copyWith(
+                                            color: Colors.grey, fontSize: 12),
+                                        labelStyle: CustomTextStyle.regularTextStyle
+                                            .copyWith(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
+                                      controller: authentificationController.emailController,
+                                      keyboardType: TextInputType.text,
+                                      obscureText: isTextWritten,
+                                    ),
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey.shade400)),
+                              ),
+                              flex: 100,
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 14),
+                      Container(
+                        margin: EdgeInsets.only(right: 14, left: 14),
+                        child: Row(
+                          children: <Widget>[
                             Expanded(
                               child: Container(
                                 child: Stack(
@@ -149,7 +223,6 @@ class _LoginState extends State<Login> {
                                       //controller: _mobileIndicatifController,
                                       keyboardType: TextInputType.phone,
                                     ),
-                                    createClearText()
                                   ],
                                 ),
                                 decoration: BoxDecoration(
@@ -199,10 +272,10 @@ class _LoginState extends State<Login> {
                                           this.isTextWritten = false;
                                         }
                                       },
-                                      controller: _mobileNumberController,
+                                      controller: authentificationController.phoneController,
                                       keyboardType: TextInputType.phone,
                                     ),
-                                    createClearText()
+                                    //createClearText()
                                   ],
                                 ),
                                 decoration: BoxDecoration(
@@ -216,43 +289,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              Get.to( ForgotPassword());
-                              /*  Navigator.of(context).push(new MaterialPageRoute(
-                                  builder: (context) => ForgotPassword()));*/
-                            },
-                            child: Container(
-                              child: Text(
-                                "I forgot my password",
-                                style: CustomTextStyle.mediumTextStyle.copyWith(
-                                    color: Colors.grey.shade600, fontSize: 12),
-                              ),
-                              margin: EdgeInsets.only(left: 18),
-                            ),
-                          ),
-                          /* GestureDetector(
-                            onTap: (){
-                            //  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>HomePage()));//
-                            },
-                            child: Container(
-                              width: 40,
-                              margin: EdgeInsets.only(right: 10),
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Colors.red, shape: BoxShape.circle),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )*/
-                        ],
-                      ),
+                      SizedBox(height: 14),
                       Container(
                         margin: EdgeInsets.only(right: 14, left: 14),
                         child: Row(
@@ -278,11 +315,10 @@ class _LoginState extends State<Login> {
                                             .copyWith(
                                             color: Colors.black, fontSize: 12),
                                       ),
-                                      controller: _mobileNumberController,
+                                      controller: authentificationController.passwordController,
                                       keyboardType: TextInputType.text,
                                       obscureText: isTextWritten,
                                     ),
-                                    createClearText()
                                   ],
                                 ),
                                 decoration: BoxDecoration(
@@ -296,16 +332,48 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
+                      SizedBox(height: 14),
+                      Align(
+                        alignment: Alignment.center,
+                        child:  GetBuilder<HomeController>(
+                          id: "5",
+                          builder: (_) => ToggleButtons(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.white,
+                                child:
+                                Image(image: AssetImage('images/ambulance.png')),
+                              ),
+                              CircleAvatar(
+                                backgroundColor: Colors.white,
+                                child:
+                                Image(image: AssetImage('images/avatar.png')),
+                              )
+                            ],
+                            //borderRadius: BorderRadius.circular(50),
+                            color: Color(0xffeeeeee),
+                            renderBorder: false,
+                            fillColor: Colors.red.shade400,
+                            splashColor: Color(0xffffc045),
+                            constraints: BoxConstraints.expand(
+                                height: size.width * 0.14, width: size.width * 0.14),
+                            isSelected: authentificationController.selectedToggleUserType,
+                            onPressed: onToggledGender,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
                       SizedBox(height: 20),
                       Container(
                         width: double.infinity,
                         margin: EdgeInsets.only(right: 16, left: 16),
                         child: RaisedButton(
                           onPressed: () {
-                            Get.to(HomePage());
+                            authentificationController.registerNewUser(context);
+                            //Get.to(HomePage());
                           },
                           child: Text(
-                            "Sign In",
+                            "Sign Up",
                             style: CustomTextStyle.mediumTextStyle
                                 .copyWith(color: Colors.white, fontSize: 14),
                           ),
@@ -315,116 +383,7 @@ class _LoginState extends State<Login> {
                           color: Colors.red,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            child: Text(
-                              "or",
-                              style: CustomTextStyle.mediumTextStyle.copyWith(
-                                  color: Colors.grey.shade600, fontSize: 12),
-                            ),
-                            margin: EdgeInsets.only(left: 18),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(right: 16, left: 16),
-                        child: RaisedButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Connect with Google Account",
-                            style: CustomTextStyle.mediumTextStyle
-                                .copyWith(color: Colors.white, fontSize: 14),
-                          ),
-                          textColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(24))),
-                          color: CustomColors.COLOR_GOOGLE,
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(right: 16, left: 16),
-                        child: RaisedButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Connect with Facebook Account",
-                            style: CustomTextStyle.mediumTextStyle
-                                .copyWith(color: Colors.white, fontSize: 14),
-                          ),
-                          textColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(24))),
-                          color: CustomColors.COLOR_FACEBOOK,
-                        ),
-                      ),
                       SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () {
-                                  Get.to( ForgotPassword());
-                                },
-                                child: Container(
-                                  child: Text(
-                                    "I forgot my password",
-                                    style: CustomTextStyle.mediumTextStyle.copyWith(
-                                        color: Colors.grey.shade600, fontSize: 12),
-                                  ),
-                                  margin: EdgeInsets.only(left: 18),
-                                ),
-                              ),
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(HomePage());
-                            },
-                            child: Container(
-                              width: 40,
-                              margin: EdgeInsets.only(right: 10),
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Colors.red, shape: BoxShape.circle),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Align(
-                          alignment: Alignment.center,
-                          child:  Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Don't have an account ? "),
-                              GestureDetector(
-                                  onTap: ()=>{
-                                    Get.to(SignUpPage())
-                                  },
-                                  child: Text("SignUp",style:
-                                  GoogleFonts.nunito(
-                                    textStyle: TextStyle(
-                                        color: Colors.red,
-                                        letterSpacing: .1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                              )
-                            ],
-                          )
-                      ),
-                      SizedBox(height: 20)
                     ],
                   ),
                 ),
@@ -435,8 +394,25 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-  createClearText() {
+  onToggledGender(int index) {
+    if (index == 0) {
+      authentificationController.selectedToggleUserType[index] = !authentificationController.selectedToggleUserType[index];
+      if (authentificationController.selectedToggleUserType[index] == true) {
+        setState(() {
+          authentificationController.selectedToggleUserType[1] = false;
+        });
+      }
+    }
+    if (index == 1) {
+      authentificationController.selectedToggleUserType[index] = !authentificationController.selectedToggleUserType[index];
+      if (authentificationController.selectedToggleUserType[index] == true) {
+        setState(() {
+          authentificationController.selectedToggleUserType[0] = false;
+        });
+      }
+    }
+  }
+/*  createClearText() {
     if (isTextWritten) {
       return Align(
         alignment: Alignment.topRight,
@@ -468,7 +444,7 @@ class _LoginState extends State<Login> {
         child: Container(),
       );
     }
-  }
+  }*/
 
   var border = OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(4)),

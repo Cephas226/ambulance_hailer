@@ -13,6 +13,7 @@ import 'package:getx_app/library/configMaps.dart';
 import 'package:getx_app/library/place_request.dart';
 import 'package:getx_app/pages/DataHandler/appData.dart';
 import 'package:getx_app/pages/components/menu.dart';
+import 'package:getx_app/pages/components/menu1.dart';
 import 'package:getx_app/pages/trip/request_driver_trip.dart';
 import 'package:getx_app/pages/trip/payment_dialog.dart';
 import 'package:getx_app/utils/bottom_sheet.dart';
@@ -324,10 +325,10 @@ class _HomePageState extends State<HomePage> {
       Placemark place = p[0];
 
       setState(() {
-        hController.currentAddress =
+        hController.currentAddress.value =
             "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
-        hController.startAddressController.text = hController.currentAddress;
-        hController.startAddress = hController.currentAddress;
+        hController.startAddressController.text = hController.currentAddress.value ;
+        hController.startAddress = hController.currentAddress.value ;
       });
     } catch (e) {
       print(e);
@@ -514,7 +515,7 @@ class _HomePageState extends State<HomePage> {
                                 showDialog(
                                     context: context,
                                     builder: (context) {
-                                      return Menu();
+                                      return MenuOnePage();
                                     });
                               }),
                         ),

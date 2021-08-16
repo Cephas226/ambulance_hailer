@@ -66,6 +66,8 @@ flutter:
   uses-material-design: true
   assets:
     - images/ic_logo.png
+    - images/ambulance.png
+    - images/avatar.png
     - images/taxi.png
     - images/map-marker.png
     - images/navigation.png

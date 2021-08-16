@@ -27,7 +27,7 @@ class HomeController extends GetxController {
   String placeDistancex;
   String startAddress = '';
   String destinationAddress = '';
-  String currentAddress = '';
+  RxString currentAddress = ''.obs;
   Position currentPosition;
   PolylinePoints polylinePoints;
   DatabaseReference rideRequestRef;
