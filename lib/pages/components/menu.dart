@@ -83,7 +83,7 @@ class _MenuState extends State<Menu> {
                               SizedBox(
                                 height: 4,
                               ),
-                              Text("06 39 60 7953",
+                              Text("06 39 60 79 53",
                                   style: CustomTextStyle.mediumTextStyle
                                       .copyWith(color: Colors.grey, fontSize: 12))
                             ],
