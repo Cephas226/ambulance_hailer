@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:getx_app/models/menu_list_item.dart';
 import 'package:getx_app/pages/authentification/help_support.dart';
+import 'package:getx_app/pages/trip/news_offers.dart';
 import 'package:getx_app/pages/user/RateCard.dart';
 import 'package:getx_app/pages/user/emergency_contact.dart';
 import 'package:getx_app/pages/trip/my_trips.dart';
-import 'package:getx_app/pages/user/payment_menu.dart';
+import 'package:get/get.dart';
 import 'package:getx_app/pages/user/profile.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:getx_app/utils/menu_title.dart';
@@ -23,15 +24,13 @@ class _MenuState extends State<Menu> {
     super.initState();
     listMenuItem
         .add(createMenuItem(MenuTitle.MENU_PROFILE, "images/menu/user.png"));
-    listMenuItem
-        .add(createMenuItem(MenuTitle.MENU_PAYMENT, "images/menu/payment.png"));
-    listMenuItem.add(createMenuItem(
-        MenuTitle.MENU_BOOK_LATER, "images/menu/book_later.png"));
     listMenuItem.add(
         createMenuItem(MenuTitle.MENU_MY_TRIPS, "images/menu/my_trips.png"));
-    listMenuItem.add(
-        createMenuItem(MenuTitle.MENU_RATE_CARD, "images/menu/rate_card.png"));
-    listMenuItem.add(createMenuItem(MenuTitle.MENU_EMERGENCY_CONTACTS,
+    listMenuItem
+        .add(createMenuItem(MenuTitle.MENU_NEWS_OFFERS, "images/menu/payment.png"));
+    listMenuItem.add(createMenuItem(MenuTitle.MENU_HELP_SUPPORT,
+        "images/menu/emergency_contacts.png"));
+    listMenuItem.add(createMenuItem(MenuTitle.ABOUT,
         "images/menu/emergency_contacts.png"));
   }
 
@@ -78,13 +77,13 @@ class _MenuState extends State<Menu> {
                                 height: 8,
                               ),
                               Text(
-                                "Ishan Madushka",
+                                "Cephas ZOUBGA",
                                 style: CustomTextStyle.mediumTextStyle,
                               ),
                               SizedBox(
                                 height: 4,
                               ),
-                              Text("+94 71 87 86 729",
+                              Text("06 39 60 7953",
                                   style: CustomTextStyle.mediumTextStyle
                                       .copyWith(color: Colors.grey, fontSize: 12))
                             ],
@@ -122,29 +121,23 @@ class _MenuState extends State<Menu> {
 
   createMenuListItemWidget(int position) {
     return GestureDetector(
+     /*   listMenuItem
+            .add(createMenuItem(MenuTitle.MENU_PROFILE, "images/menu/user.png"));
+        listMenuItem.add(
+        createMenuItem(MenuTitle.MENU_MY_TRIPS, "images/menu/my_trips.png"));
+    listMenuItem
+        .add(createMenuItem(MenuTitle.MENU_NEWS_OFFERS, "images/menu/payment.png"));
+    listMenuItem.add(createMenuItem(MenuTitle.MENU_HELP_SUPPORT,
+    "images/menu/emergency_contacts.png"));
+    listMenuItem.add(createMenuItem(MenuTitle.ABOUT,*/
       onTap: () {
-        if (listMenuItem[position].title == MenuTitle.MENU_PROFILE) {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (context) => Profile()));
-        } else if (listMenuItem[position].title == MenuTitle.MENU_PAYMENT) {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (context) => PaymentMenu()));
-        }  else if (listMenuItem[position].title == MenuTitle.MENU_MY_TRIPS) {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (context) => MyTrips()));
-        } else if (listMenuItem[position].title == MenuTitle.MENU_RATE_CARD) {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (context) => RateCard()));
-        } else if (listMenuItem[position].title ==
-            MenuTitle.MENU_EMERGENCY_CONTACTS) {
-          Navigator.of(context).push(
-              new MaterialPageRoute(builder: (context) => EmergencyContacts()));
-        } else if (listMenuItem[position].title ==
-            MenuTitle.MENU_HELP_SUPPORT) {
-          Navigator.of(context)
-              .push(new MaterialPageRoute(builder: (context) => HelpSupport()));
-        }
-      },
+        if (listMenuItem[position].title == MenuTitle.MENU_PROFILE) {{Get.to(Profile());}
+        }  else if (listMenuItem[position].title == MenuTitle.MENU_MY_TRIPS) {{Get.to(MyTrips());}
+        } else if (listMenuItem[position].title == MenuTitle.MENU_NEWS_OFFERS) {{Get.to(NewsOffers());}}
+        else if (listMenuItem[position].title ==
+            MenuTitle.MENU_HELP_SUPPORT) {Get.to(HelpSupport());}
+        else if (listMenuItem[position].title ==
+            MenuTitle.ABOUT) {Get.to(HelpSupport());}},
       child: Container(
         padding: EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
         child: Row(

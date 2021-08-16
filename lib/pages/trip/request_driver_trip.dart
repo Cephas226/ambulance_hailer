@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:getx_app/pages/home/home_controller.dart';
 import 'package:getx_app/pages/home/home_page.dart';
 import 'package:getx_app/utils/CustomTextStyle.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,6 +27,7 @@ class _RequestTripState extends State<RequestTripPage> {
   GoogleMapController mapController;
 
   BitmapDescriptor bitmapDescriptor;
+  HomeController hController = Get.put(HomeController());
 
   @override
   void initState() {
@@ -113,7 +115,8 @@ class _RequestTripState extends State<RequestTripPage> {
                                 margin: EdgeInsets.only(top: 16),
                                 child: RaisedButton(
                                   onPressed: () {
-                                    Get.off(HomePage());
+                                    hController.cancelRideRequest();
+                                    Get.back();
                                   },
                                   color: Colors.red,
                                   child: Text(

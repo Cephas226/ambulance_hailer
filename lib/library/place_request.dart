@@ -50,8 +50,8 @@ class PlaceApiProvider {
 
   final sessionToken;
 
-  static final String androidKey = 'AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE';
-  static final String iosKey = 'AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE';
+  static final String androidKey = 'AIzaSyAtzQc5uOLC9UcrPka0QHCsrpxx7Chxl0A';
+  static final String iosKey = 'AIzaSyAtzQc5uOLC9UcrPka0QHCsrpxx7Chxl0A';
   final apiKey = Platform.isAndroid ? androidKey : iosKey;
 
   Future<List<Suggestion>> fetchSuggestions(String input, String lang) async {
@@ -140,8 +140,8 @@ class GoogleMapsServices{
     return route;
   }
   static void getCurrentOnLineUserInfo() async {
-    firebaseUser = await FirebaseAuth.instance.currentUser;
-    String userId = firebaseUser.uid;
+    firebaseUser = FirebaseAuth.instance.currentUser;
+    String userId = "ZPI79uACPuTU01p7rL9zPt5PFcs1";
     DatabaseReference reference = FirebaseDatabase.instance.reference().child("users").child(userId);
 
     reference.once().then((DataSnapshot dataSnapShot){
@@ -168,7 +168,7 @@ class DirectionsRepository {
       queryParameters: {
         'origin': '${origin.latitude},${origin.longitude}',
         'destination': '${destination.latitude},${destination.longitude}',
-        'key': "AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE",
+        'key': "AIzaSyAtzQc5uOLC9UcrPka0QHCsrpxx7Chxl0A",
       },
     );
 

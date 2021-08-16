@@ -6,7 +6,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:getx_app/pages/home/resumeTransaction.dart';
+import 'package:getx_app/library/configMaps.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 
@@ -17,13 +17,12 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-  LatLng initialPosition=LatLng(33.609434051916494, -7.623460799015407);
-   GoogleMapController mapController;
+  GoogleMapController mapController;
 
-   Position _currentPosition;
+  Position _currentPosition;
   String _currentAddress = '';
 
-  TextEditingController startAddressController = TextEditingController();
+  final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
 
   final startAddressFocusNode = FocusNode();
@@ -35,7 +34,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Set<Marker> markers = {};
 
-   PolylinePoints polylinePoints;
+  PolylinePoints polylinePoints;
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
 
@@ -45,17 +44,15 @@ class _MapScreenState extends State<MapScreen> {
      TextEditingController controller,
      FocusNode focusNode,
      String label,
-     bool readValue=false,
      String hint,
      double width,
      Icon prefixIcon,
-    Widget suffixIcon,
+     Widget suffixIcon,
      Function(String) locationCallback,
   }) {
     return Container(
       width: width * 0.8,
       child: TextField(
-        readOnly:readValue,
         onChanged: (value) {
           locationCallback(value);
         },
@@ -156,8 +153,7 @@ class _MapScreenState extends State<MapScreen> {
       double destinationLongitude = destinationPlacemark[0].longitude;
 
       String startCoordinatesString = '($startLatitude, $startLongitude)';
-      String destinationCoordinatesString =
-          '($destinationLatitude, $destinationLongitude)';
+      String destinationCoordinatesString = '($destinationLatitude, $destinationLongitude)';
 
       // Start Location Marker
       Marker startMarker = Marker(
@@ -282,7 +278,7 @@ class _MapScreenState extends State<MapScreen> {
       ) async {
     polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyC1ILfyVfqXrpgRDkfmA6SRPIwyBV2T7bE", // Google Maps API Key
+      myApiKey, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
       PointLatLng(destinationLatitude, destinationLongitude),
       travelMode: TravelMode.transit,
@@ -337,8 +333,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             // Show zoom buttons
             SafeArea(
-              child:
-              Padding(
+              child: Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -389,8 +384,7 @@ class _MapScreenState extends State<MapScreen> {
             SafeArea(
               child: Align(
                 alignment: Alignment.topCenter,
-                child:
-                Padding(
+                child: Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Container(
                     decoration: BoxDecoration(
@@ -400,8 +394,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     ),
                     width: width * 0.9,
-                    child:
-                    Padding(
+                    child: Padding(
                       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -411,6 +404,38 @@ class _MapScreenState extends State<MapScreen> {
                             style: TextStyle(fontSize: 20.0),
                           ),
                           SizedBox(height: 10),
+                          _textField(
+                              label: 'Start',
+                              hint: 'Choose starting point',
+                              prefixIcon: Icon(Icons.looks_one),
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.my_location),
+                                onPressed: () {
+                                  startAddressController.text = _currentAddress;
+                                  _startAddress = _currentAddress;
+                                },
+                              ),
+                              controller: startAddressController,
+                              focusNode: startAddressFocusNode,
+                              width: width,
+                              locationCallback: (String value) {
+                                setState(() {
+                                  _startAddress = value;
+                                });
+                              }),
+                          SizedBox(height: 10),
+                          _textField(
+                              label: 'Destination',
+                              hint: 'Choose destination',
+                              prefixIcon: Icon(Icons.looks_two),
+                              controller: destinationAddressController,
+                              focusNode: desrinationAddressFocusNode,
+                              width: width,
+                              locationCallback: (String value) {
+                                setState(() {
+                                  _destinationAddress = value;
+                                });
+                              }),
                           SizedBox(height: 10),
                           Visibility(
                             visible: _placeDistance == null ? false : true,
@@ -424,8 +449,9 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                           SizedBox(height: 5),
                           ElevatedButton(
-                            onPressed: (_startAddress != '' &&_destinationAddress != '')? () async
-                            {
+                            onPressed: (_startAddress != '' &&
+                                _destinationAddress != '')
+                                ? () async {
                               startAddressFocusNode.unfocus();
                               desrinationAddressFocusNode.unfocus();
                               setState(() {
@@ -456,7 +482,8 @@ class _MapScreenState extends State<MapScreen> {
                                   );
                                 }
                               });
-                            } : null,
+                            }
+                                : null,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
