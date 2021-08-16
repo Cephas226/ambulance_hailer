@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:getx_app/main.dart';
 import 'package:getx_app/pages/home/home_controller.dart';
 import 'package:getx_app/pages/home/home_page.dart';
 import 'package:getx_app/utils/CustomColors.dart';
@@ -18,6 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
   var selectedItem;
   bool isTextWritten = false;
   var selectedValue = "+233";
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final AuthentificationController authentificationController = Get.put(AuthentificationController());
   createCountryCodeList() {
     List<DropdownMenuItem<String>> countryCodeList = new List();
@@ -119,7 +122,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       controller: authentificationController.nameController,
                                       keyboardType: TextInputType.text,
-                                      obscureText: isTextWritten,
                                     ),
                                   ],
                                 ),
@@ -162,7 +164,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       controller: authentificationController.emailController,
                                       keyboardType: TextInputType.text,
-                                      obscureText: isTextWritten,
                                     ),
                                   ],
                                 ),
@@ -368,9 +369,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         width: double.infinity,
                         margin: EdgeInsets.only(right: 16, left: 16),
                         child: RaisedButton(
-                          onPressed: () {
-                            authentificationController.registerNewUser(context);
-                            //Get.to(HomePage());
+                          onPressed: () {registerNewUser();
+                           // Get.to(HomePage());
                           },
                           child: Text(
                             "Sign Up",
@@ -445,7 +445,22 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     }
   }*/
-
+  void registerNewUser() async{
+    Map userDataMap ={
+      "name":authentificationController.nameController.text.trim(),
+      "email":authentificationController.emailController.text.trim(),
+      "phone":authentificationController.phoneController.text.trim(),
+      "userType":authentificationController.selectedToggleUserType.first
+    };
+    print(userDataMap);
+    final UserCredential authResult = (await firebaseAuth.createUserWithEmailAndPassword(email: authentificationController.emailController.text, password: authentificationController.passwordController.text)
+        .catchError((errMsg){
+      print(errMsg);
+    }));
+    print(authResult);
+    final User firebaseUser = authResult.user;
+    usersRef.child(firebaseUser.uid).set(userDataMap).onError((error, stackTrace) => print(error));
+  }
   var border = OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(4)),
       borderSide: BorderSide(color: Colors.white, width: 1));

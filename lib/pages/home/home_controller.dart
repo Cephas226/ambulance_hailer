@@ -13,23 +13,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeController extends GetxController {
-  TextEditingController startAddressController = TextEditingController();
-  final destinationAddressController = TextEditingController();
-  final startAddressFocusNode = FocusNode();
-  final destinationAddressFocusNode = FocusNode();
-  List<LatLng> polylineCoordinates = [];
-  Map<PolylineId, Polyline> polylines = {};
-  Set<Marker> markers = new Set();
-  LatLng initialPosition = LatLng(33.609434051916494, -7.623460799015407);
-  CameraPosition initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-  GoogleMapController mapController;
-  BitmapDescriptor bitmapDescriptor;
-  String placeDistancex;
-  String startAddress = '';
-  String destinationAddress = '';
-  RxString currentAddress = ''.obs;
-  Position currentPosition;
-  PolylinePoints polylinePoints;
+
   DatabaseReference rideRequestRef;
   @override
   void dispose() {

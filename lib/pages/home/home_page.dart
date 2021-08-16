@@ -31,9 +31,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  Set<Marker> markers = new Set();
   HomeController hController = Get.put(HomeController());
   String _placeDistance;
+  CameraPosition initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
+  List<LatLng> polylineCoordinates = [];
+  Map<PolylineId, Polyline> polylines = {};
+  LatLng initialPosition = LatLng(33.609434051916494, -7.623460799015407);
+  GoogleMapController mapController;
+  BitmapDescriptor bitmapDescriptor;
+  String placeDistancex;
+  String startAddress = '';
+  String destinationAddress = '';
+  RxString currentAddress = ''.obs;
+  Position currentPosition;
+  PolylinePoints polylinePoints;
+  TextEditingController startAddressController = TextEditingController();
+  final destinationAddressController = TextEditingController();
+  final startAddressFocusNode = FocusNode();
+  final destinationAddressFocusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -45,18 +61,18 @@ class _HomePageState extends State<HomePage> {
     hController.rideRequestRef =
         FirebaseDatabase.instance.reference().child("Ride Requests").push();
     // Retrieving placemarks from addresses
-    List<Location> startPlacemark = await locationFromAddress(hController.startAddress);
-    List<Location> destinationPlacemark = await locationFromAddress(hController.destinationAddress);
+    List<Location> startPlacemark = await locationFromAddress(startAddress);
+    List<Location> destinationPlacemark = await locationFromAddress(destinationAddress);
 
     // Use the retrieved coordinates of the current position,
     // instead of the address if the start position is user's
     // current position, as it results in better accuracy.
-    double startLatitude = hController.startAddress == hController.currentAddress
-        ? hController.currentPosition.latitude
+    double startLatitude = startAddress == currentAddress
+        ? currentPosition.latitude
         : startPlacemark[0].latitude;
 
-    double startLongitude = hController.startAddress == hController.currentAddress
-        ? hController.currentPosition.longitude
+    double startLongitude = startAddress == currentAddress
+        ? currentPosition.longitude
         : startPlacemark[0].longitude;
 
     double destinationLatitude = destinationPlacemark[0].latitude;
@@ -85,8 +101,8 @@ class _HomePageState extends State<HomePage> {
       "created_at":DateTime.now().toString(),
       "rider_name":"Cephas",
       "rider_phone":"0639607953",
-      "pickup_address":hController.startAddress,
-      "dropoff_address":hController.destinationAddressController.text
+      "pickup_address":startAddress,
+      "dropoff_address":destinationAddressController.text
     };
     hController.rideRequestRef.push().set(rideInfoMap);
   }
@@ -95,18 +111,18 @@ class _HomePageState extends State<HomePage> {
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses
-      List<Location> startPlacemark = await locationFromAddress(hController.startAddress);
-      List<Location> destinationPlacemark = await locationFromAddress(hController.destinationAddress);
+      List<Location> startPlacemark = await locationFromAddress(startAddress);
+      List<Location> destinationPlacemark = await locationFromAddress(destinationAddress);
 
       // Use the retrieved coordinates of the current position,
       // instead of the address if the start position is user's
       // current position, as it results in better accuracy.
-      double startLatitude = hController.startAddress == hController.currentAddress
-          ? hController.currentPosition.latitude
+      double startLatitude = startAddress == currentAddress
+          ?currentPosition.latitude
           : startPlacemark[0].latitude;
 
-      double startLongitude = hController.startAddress == hController.currentAddress
-          ? hController.currentPosition.longitude
+      double startLongitude = startAddress == currentAddress
+          ? currentPosition.longitude
           : startPlacemark[0].longitude;
 
       double destinationLatitude = destinationPlacemark[0].latitude;
@@ -114,14 +130,14 @@ class _HomePageState extends State<HomePage> {
 
       String startCoordinatesString = '($startLatitude, $startLongitude)';
       String destinationCoordinatesString ='($destinationLatitude, $destinationLongitude)';
-      print(hController.destinationAddress.toString());
+      print(destinationAddress.toString());
       // Start Location Marker
       Marker startMarker = Marker(
         markerId: MarkerId(startCoordinatesString),
         position: LatLng(startLatitude, startLongitude),
         infoWindow: InfoWindow(
           title: 'Start $startCoordinatesString',
-          snippet: hController.startAddress,
+          snippet:startAddress,
         ),
         icon: BitmapDescriptor.defaultMarker,
       );
@@ -132,18 +148,18 @@ class _HomePageState extends State<HomePage> {
         position: LatLng(destinationLatitude, destinationLongitude),
         infoWindow: InfoWindow(
           title: 'Destination $destinationCoordinatesString',
-          snippet: hController.destinationAddressController.text,
+          snippet:destinationAddressController.text,
         ),
         icon: BitmapDescriptor.defaultMarker,
       );
 
       // Adding the markers to the list
-      hController.markers.add(startMarker);
-      hController.markers.add(destinationMarker);
+      markers.add(startMarker);
+      markers.add(destinationMarker);
 
-      hController.markers.add(Marker(
+      markers.add(Marker(
           //add first marker
-          markerId: MarkerId(hController.initialPosition.toString() + 1.0.toString()),
+          markerId: MarkerId(initialPosition.toString() + 1.0.toString()),
           position: LatLng(33.609434051916494, -7.623460799015407),
           infoWindow: InfoWindow(
             //popup info
@@ -155,9 +171,9 @@ class _HomePageState extends State<HomePage> {
               'images/taxi.png') //Icon for Marker
           ));
 
-      hController.markers.add(Marker(
+      markers.add(Marker(
         //add second marker
-        markerId: MarkerId(hController.initialPosition.toString() + 2.0.toString()),
+        markerId: MarkerId(initialPosition.toString() + 2.0.toString()),
         position: LatLng(33.589939805473726, -7.591033264638604),
         infoWindow: InfoWindow(
           //popup info
@@ -169,9 +185,9 @@ class _HomePageState extends State<HomePage> {
             'images/taxi.png'), //Icon for Marker
       ));
 
-      hController.markers.add(Marker(
+      markers.add(Marker(
         //add second marker
-        markerId: MarkerId(hController.initialPosition.toString() + 3.0.toString()),
+        markerId: MarkerId(initialPosition.toString() + 3.0.toString()),
         position: LatLng(33.599924400228765, -7.612786721808061),
         infoWindow: InfoWindow(
           //popup info
@@ -182,9 +198,9 @@ class _HomePageState extends State<HomePage> {
             ImageConfiguration(devicePixelRatio: 2.5),
             'images/taxi.png'), //Icon for Marker
       ));
-      hController.markers.add(Marker(
+      markers.add(Marker(
         //add second marker
-        markerId: MarkerId(hController.initialPosition.toString() + 4.0.toString()),
+        markerId: MarkerId(initialPosition.toString() + 4.0.toString()),
         position: LatLng(33.58414632897516, -7.623243031941734),
         infoWindow: InfoWindow(
           //popup info
@@ -219,7 +235,7 @@ class _HomePageState extends State<HomePage> {
 
       // Accommodate the two locations within the
       // camera view of the map
-      hController.mapController.animateCamera(
+      mapController.animateCamera(
         CameraUpdate.newLatLngBounds(
           LatLngBounds(
             northeast: LatLng(northEastLatitude, northEastLongitude),
@@ -245,12 +261,12 @@ class _HomePageState extends State<HomePage> {
 
       // Calculating the total distance by adding the distance
       // between small segments
-      for (int i = 0; i < hController.polylineCoordinates.length - 1; i++) {
+      for (int i = 0; i < polylineCoordinates.length - 1; i++) {
         totalDistance += _coordinateDistance(
-          hController.polylineCoordinates[i].latitude,
-          hController.polylineCoordinates[i].longitude,
-          hController.polylineCoordinates[i + 1].latitude,
-          hController.polylineCoordinates[i + 1].longitude,
+          polylineCoordinates[i].latitude,
+         polylineCoordinates[i].longitude,
+         polylineCoordinates[i + 1].latitude,
+          polylineCoordinates[i + 1].longitude,
         );
       }
 
@@ -275,8 +291,8 @@ class _HomePageState extends State<HomePage> {
   }
   // Create the polylines for showing the route between two places
   _createPolylines(double startLatitude,double startLongitude,double destinationLatitude,double destinationLongitude) async {
-    hController.polylinePoints = PolylinePoints();
-    PolylineResult result = await hController.polylinePoints.getRouteBetweenCoordinates(
+    polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       myApiKey,
       PointLatLng(startLatitude, startLongitude),
       PointLatLng(destinationLatitude, destinationLongitude),
@@ -285,7 +301,7 @@ class _HomePageState extends State<HomePage> {
 
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
-        hController.polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
     }
 
@@ -293,17 +309,16 @@ class _HomePageState extends State<HomePage> {
     Polyline polyline = Polyline(
       polylineId: id,
       color: Colors.red,
-      points: hController.polylineCoordinates,
+      points:polylineCoordinates,
       width: 3,
     );
-    hController.polylines[id] = polyline;
+    polylines[id] = polyline;
   }
   _getCurrentLocation() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) async {
-      setState(() {
-        hController.currentPosition = position;
-        hController.mapController.animateCamera(
+      setState(() {currentPosition = position;
+        mapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(position.latitude, position.longitude),
@@ -320,15 +335,14 @@ class _HomePageState extends State<HomePage> {
   _getAddress() async {
     try {
       List<Placemark> p = await placemarkFromCoordinates(
-          hController.currentPosition.latitude, hController.currentPosition.longitude);
+          currentPosition.latitude, currentPosition.longitude);
 
       Placemark place = p[0];
 
-      setState(() {
-        hController.currentAddress.value =
+      setState(() {currentAddress.value =
             "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
-        hController.startAddressController.text = hController.currentAddress.value ;
-        hController.startAddress = hController.currentAddress.value ;
+        startAddressController.text = currentAddress.value ;
+        startAddress = currentAddress.value ;
       });
     } catch (e) {
       print(e);
@@ -353,16 +367,16 @@ class _HomePageState extends State<HomePage> {
                       height: double.infinity,
                       child:
                       GoogleMap(
-                        markers: Set<Marker>.from(hController.markers),
-                        initialCameraPosition: hController.initialLocation,
+                        markers: Set<Marker>.from(markers),
+                        initialCameraPosition: initialLocation,
                         myLocationEnabled: true,
                         myLocationButtonEnabled: false,
                         mapType: MapType.normal,
                         zoomGesturesEnabled: true,
                         zoomControlsEnabled: false,
-                        polylines: Set<Polyline>.of(hController.polylines.values),
+                        polylines: Set<Polyline>.of(polylines.values),
                         onMapCreated: (GoogleMapController controller) {
-                          hController.mapController = controller;
+                          mapController = controller;
                         },
                       )),
                   SafeArea(
@@ -403,8 +417,8 @@ class _HomePageState extends State<HomePage> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    controller: hController.startAddressController,
-                                    focusNode: hController.startAddressFocusNode,
+                                    controller:startAddressController,
+                                    focusNode:startAddressFocusNode,
                                     readOnly: true,
                                     onTap: () async {
 
@@ -429,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    controller: hController.destinationAddressController,
+                                    controller:destinationAddressController,
                                     readOnly: true,
                                     onTap: () async {
                                       Navigator.push(
@@ -437,17 +451,15 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                           builder: (context) => PlacePicker(
                                             apiKey:myApiKey, // Put YOUR OWN KEY here.
-                                            onPlacePicked: (result) {
-                                              hController.startAddressFocusNode.unfocus();
-                                              hController.destinationAddressFocusNode.unfocus();
+                                            onPlacePicked: (result) {startAddressFocusNode.unfocus();
+                                              destinationAddressFocusNode.unfocus();
                                               setState(() {
-                                                if (hController.markers.isNotEmpty)
-                                                  hController.markers.clear();
-                                                if (hController.polylines.isNotEmpty)
-                                                  hController.polylines.clear();
-                                                if (hController.polylineCoordinates
-                                                    .isNotEmpty)
-                                                  hController.polylineCoordinates.clear();
+                                                if (markers.isNotEmpty)
+                                                  markers.clear();
+                                                if (polylines.isNotEmpty)
+                                                  polylines.clear();
+                                                if (polylineCoordinates
+                                                    .isNotEmpty)polylineCoordinates.clear();
                                                 _placeDistance = null;
                                               });
 
@@ -472,13 +484,12 @@ class _HomePageState extends State<HomePage> {
                                                 }
                                               });
                                               Navigator.of(context).pop();
-                                              hController.destinationAddressController
+                                              destinationAddressController
                                                       .text =
-                                                  result.formattedAddress;
-                                              hController.destinationAddress =hController.destinationAddressController
+                                                  result.formattedAddress;destinationAddress =destinationAddressController
                                                       .toString();
                                             },
-                                            initialPosition: hController.initialPosition,
+                                            initialPosition: initialPosition,
                                             useCurrentLocation: true,
                                             selectInitialPosition: true,
                                           ),
@@ -492,7 +503,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.black),
                                       labelText: 'Choose a destination',
                                     ),
-                                    onChanged: (value) {hController.destinationAddress = value;
+                                    onChanged: (value) {destinationAddress = value;
                                     },
                                   ),
                                 ),
@@ -522,7 +533,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Spacer(),
                       Visibility(
-                        visible: hController.destinationAddress == '' ? false : true,
+                        visible: destinationAddress == '' ? false : true,
                         child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
@@ -690,13 +701,12 @@ class _HomePageState extends State<HomePage> {
                                 height: 56,
                                 child: Icon(Icons.my_location),
                               ),
-                              onTap: () {
-                                hController.mapController.animateCamera(
+                              onTap: () {mapController.animateCamera(
                                   CameraUpdate.newCameraPosition(
                                     CameraPosition(
                                       target: LatLng(
-                                        hController.currentPosition.latitude,
-                                        hController.currentPosition.longitude,
+                                        currentPosition.latitude,
+                                        currentPosition.longitude,
                                       ),
                                       zoom: 18.0,
                                     ),

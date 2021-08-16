@@ -141,7 +141,7 @@ class GoogleMapsServices{
   }
   static void getCurrentOnLineUserInfo() async {
     firebaseUser = FirebaseAuth.instance.currentUser;
-    String userId = "ZPI79uACPuTU01p7rL9zPt5PFcs1";
+    String userId = firebaseUser?.uid;
     DatabaseReference reference = FirebaseDatabase.instance.reference().child("users").child(userId);
 
     reference.once().then((DataSnapshot dataSnapShot){

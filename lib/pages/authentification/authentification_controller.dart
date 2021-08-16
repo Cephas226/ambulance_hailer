@@ -14,7 +14,7 @@ class AuthentificationController extends GetxController {
   TextEditingController phoneController;
   TextEditingController passwordController;
   TextEditingController emailController;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   @override
   Future<void> onInit() async {
     nameController = TextEditingController();
@@ -46,26 +46,5 @@ class AuthentificationController extends GetxController {
     }
     return validated;
   }
-  void registerNewUser(context) async{
-    if (validateCreds()) {
-      final UserCredential authResult = (await _firebaseAuth.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text).catchError((errMsg){
-        print("error");
-      }));
-      final User firebaseUser = authResult.user;
-    if (firebaseUser != null){
-        Map userDataMap ={
-          "name":nameController.text.trim(),
-          "email":emailController.text.trim(),
-          "phone":phoneController.text.trim(),
-          "userType":selectedToggleUserType.first
-        };
-        print(userDataMap);
-        usersRef.child(firebaseUser.uid).set(userDataMap);
-        Get.off(HomePage());
-    }
-    else {
 
-    }
-    }
-  }
 }
