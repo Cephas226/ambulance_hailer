@@ -1,5 +1,5 @@
 import "package:firebase_auth/firebase_auth.dart";
-import 'package:getx_app/models/allUsers.dart';
+import 'package:ambulance_hailer/models/allUsers.dart';
 User firebaseUser;
 Users userCurrentInfo;
 

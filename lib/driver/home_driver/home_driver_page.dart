@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:ambulance_hailer/pages/home/home_controller.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -22,15 +24,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'home_controller.dart';
+import 'home_driver_controller.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
+class HomeDriverPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeDriverPageState createState() => _HomeDriverPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeDriverPageState extends State<HomeDriverPage> {
   Set<Marker> markers = new Set();
   HomeController hController = Get.put(HomeController());
   String _placeDistance;
@@ -382,136 +384,43 @@ class _HomePageState extends State<HomePage> {
                   SafeArea(
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20.0),
-                            ),
-                          ),
-                          width: size.width * 0.9,
-                          child:
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text("WHERE ARE YOU GOING ?",
-                                    style: GoogleFonts.nunito(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          letterSpacing: .1),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w900,
-                                    )),
-                                SizedBox(height: 10),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  child: TextFormField(
-                                    style: GoogleFonts.nunito(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          letterSpacing: .1),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
+                      child:
+                      Container(
+                        color: Colors.black12,
+                        width:double.infinity,
+                        height: size.height*0.1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: ()async {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Now online'.toUpperCase(),
+                                      style: CustomTextStyle.mediumTextStyle.copyWith(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400),
                                     ),
-                                    controller:startAddressController,
-                                    focusNode:startAddressFocusNode,
-                                    readOnly: true,
-                                    onTap: () async {
-
-                                    },
-                                    decoration: const InputDecoration(
-                                      labelStyle:
-                                          TextStyle(color: Colors.black),
-                                      icon: FaIcon(
-                                          FontAwesomeIcons.locationArrow,
-                                          color: Colors.black),
-                                      labelText: 'Actual position',
-                                    ),
-                                  ),
+                                    Icon(
+                                      Icons.phone_android,
+                                      color: Colors.white,
+                                    )
+                                  ],
+                                )
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  child: TextFormField(
-                                    style: GoogleFonts.nunito(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          letterSpacing: .1),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    controller:destinationAddressController,
-                                    readOnly: true,
-                                    onTap: () async {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PlacePicker(
-                                            apiKey:myApiKey, // Put YOUR OWN KEY here.
-                                            onPlacePicked: (result) {startAddressFocusNode.unfocus();
-                                              destinationAddressFocusNode.unfocus();
-                                              setState(() {
-                                                if (markers.isNotEmpty)
-                                                  markers.clear();
-                                                if (polylines.isNotEmpty)
-                                                  polylines.clear();
-                                                if (polylineCoordinates
-                                                    .isNotEmpty)polylineCoordinates.clear();
-                                                _placeDistance = null;
-                                              });
-
-                                              _calculateDistance()
-                                                  .then((isCalculated) {
-                                                if (isCalculated) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                          'Distance Calculated Sucessfully'),
-                                                    ),
-                                                  );
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                          'Error Calculating Distance'),
-                                                    ),
-                                                  );
-                                                }
-                                              });
-                                              Navigator.of(context).pop();
-                                              destinationAddressController
-                                                      .text =
-                                                  result.formattedAddress;destinationAddress =destinationAddressController
-                                                      .toString();
-                                            },
-                                            initialPosition: initialPosition,
-                                            useCurrentLocation: true,
-                                            selectInitialPosition: true,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    decoration: const InputDecoration(
-                                      labelStyle:
-                                          TextStyle(color: Colors.black),
-                                      icon: FaIcon(FontAwesomeIcons.search,
-                                          color: Colors.black),
-                                      labelText: 'Choose a destination',
-                                    ),
-                                    onChanged: (value) {destinationAddress = value;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                              ),
+                            )],
+                        )
                       ),
                     ),
                   ),

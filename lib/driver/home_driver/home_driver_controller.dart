@@ -12,7 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 
-class HomeController extends GetxController {
+class HomeDriverController extends GetxController {
 
   DatabaseReference rideRequestRef;
   @override

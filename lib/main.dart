@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getx_app/pages/DataHandler/appData.dart';
+import 'package:ambulance_hailer/pages/DataHandler/appData.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';

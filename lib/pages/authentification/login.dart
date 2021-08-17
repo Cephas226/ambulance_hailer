@@ -1,15 +1,19 @@
+import 'package:ambulance_hailer/driver/dashboard/dashboard_page.dart';
+import 'package:ambulance_hailer/pages/authentification/signup.dart';
+import 'package:ambulance_hailer/pages/home/home_page.dart';
+import 'package:ambulance_hailer/utils/CustomColors.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:getx_app/pages/authentification/signup.dart';
-import 'package:getx_app/pages/home/home_page.dart';
-import 'package:getx_app/utils/CustomColors.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'connect_social_account.dart';
+import '../../main.dart';
+import 'authentification_controller.dart';
 import 'forgot_password.dart';
-import 'login_password.dart';
 import 'package:get/get.dart';
+
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -20,9 +24,10 @@ class _LoginState extends State<Login> {
   TextEditingController _mobileNumberController = TextEditingController();
   TextEditingController _mobileIndicatifController;
   bool isTextWritten = false;
-
   var selectedValue = "+233";
-
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  AuthentificationController authentificationController =
+      Get.put(AuthentificationController());
   createCountryCodeList() {
     List<DropdownMenuItem<String>> countryCodeList = new List();
     countryCodeList.add(createDropdownItem("+91"));
@@ -98,71 +103,6 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.only(right: 14, left: 14),
                         child: Row(
                           children: <Widget>[
-                            /* Container(
-                              padding: EdgeInsets.only(
-                                  left: 8, right: 8, top: 4, bottom: 4),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(6)),
-                                  border:
-                                  Border.all(color: Colors.grey.shade400)),
-                              child: Text("+233"),
-                            ),*/
-                            Expanded(
-                              child: Container(
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: <Widget>[
-                                    TextFormField(
-                                      initialValue: '+233',
-                                      readOnly:true,
-                                      decoration: InputDecoration(
-                                        border: border,
-                                        enabledBorder: border,
-                                        focusedBorder: border,
-                                        contentPadding: EdgeInsets.only(
-                                            left: 8,
-                                            right: 32,
-                                            top: 6,
-                                            bottom: 6),
-                                        hintText: "Mobile Number",
-                                        hasFloatingPlaceholder: true,
-                                        hintStyle: CustomTextStyle
-                                            .regularTextStyle
-                                            .copyWith(
-                                            color: Colors.grey, fontSize: 12),
-                                        labelStyle: CustomTextStyle
-                                            .regularTextStyle
-                                            .copyWith(
-                                            color: Colors.black,
-                                            fontSize: 12),
-                                      ),
-                                      onChanged: (value) {
-                                        if (value.trim().length > 0) {
-                                          setState(() {
-                                            this.isTextWritten = true;
-                                          });
-                                        } else {
-                                          this.isTextWritten = false;
-                                        }
-                                      },
-                                      //controller: _mobileIndicatifController,
-                                      keyboardType: TextInputType.phone,
-                                    ),
-                                    createClearText()
-                                  ],
-                                ),
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                                    border: Border.all(
-                                        width: 1, color: Colors.grey.shade400)),
-                              ),
-                              flex: 30,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
                             Expanded(
                               child: Container(
                                 child: Stack(
@@ -178,36 +118,29 @@ class _LoginState extends State<Login> {
                                             right: 32,
                                             top: 6,
                                             bottom: 6),
-                                        hintText: "00 00 00 00 00",
+                                        hintText: "Your email",
                                         hasFloatingPlaceholder: true,
                                         hintStyle: CustomTextStyle
                                             .regularTextStyle
                                             .copyWith(
-                                            color: Colors.grey, fontSize: 12),
+                                                color: Colors.grey,
+                                                fontSize: 12),
                                         labelStyle: CustomTextStyle
                                             .regularTextStyle
                                             .copyWith(
-                                            color: Colors.black,
-                                            fontSize: 12),
+                                                color: Colors.black,
+                                                fontSize: 12),
                                       ),
-                                      onChanged: (value) {
-                                        if (value.trim().length > 0) {
-                                          setState(() {
-                                            this.isTextWritten = true;
-                                          });
-                                        } else {
-                                          this.isTextWritten = false;
-                                        }
-                                      },
-                                      controller: _mobileNumberController,
-                                      keyboardType: TextInputType.phone,
+                                      controller: authentificationController
+                                          .emailController,
+                                      keyboardType: TextInputType.text,
                                     ),
                                     createClearText()
                                   ],
                                 ),
                                 decoration: BoxDecoration(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                        BorderRadius.all(Radius.circular(4)),
                                     border: Border.all(
                                         width: 1, color: Colors.grey.shade400)),
                               ),
@@ -217,42 +150,6 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              Get.to( ForgotPassword());
-                              /*  Navigator.of(context).push(new MaterialPageRoute(
-                                  builder: (context) => ForgotPassword()));*/
-                            },
-                            child: Container(
-                              child: Text(
-                                "I forgot my password",
-                                style: CustomTextStyle.mediumTextStyle.copyWith(
-                                    color: Colors.grey.shade600, fontSize: 12),
-                              ),
-                              margin: EdgeInsets.only(left: 18),
-                            ),
-                          ),
-                          /* GestureDetector(
-                            onTap: (){
-                            //  Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=>HomePage()));//
-                            },
-                            child: Container(
-                              width: 40,
-                              margin: EdgeInsets.only(right: 10),
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Colors.red, shape: BoxShape.circle),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )*/
-                        ],
-                      ),
                       Container(
                         margin: EdgeInsets.only(right: 14, left: 14),
                         child: Row(
@@ -268,26 +165,34 @@ class _LoginState extends State<Login> {
                                         enabledBorder: border,
                                         focusedBorder: border,
                                         contentPadding: EdgeInsets.only(
-                                            left: 8, right: 32, top: 6, bottom: 6),
+                                            left: 8,
+                                            right: 32,
+                                            top: 6,
+                                            bottom: 6),
                                         hintText: "Enter your password",
                                         hasFloatingPlaceholder: true,
-                                        hintStyle: CustomTextStyle.regularTextStyle
+                                        hintStyle: CustomTextStyle
+                                            .regularTextStyle
                                             .copyWith(
-                                            color: Colors.grey, fontSize: 12),
-                                        labelStyle: CustomTextStyle.regularTextStyle
+                                                color: Colors.grey,
+                                                fontSize: 12),
+                                        labelStyle: CustomTextStyle
+                                            .regularTextStyle
                                             .copyWith(
-                                            color: Colors.black, fontSize: 12),
+                                                color: Colors.black,
+                                                fontSize: 12),
                                       ),
-                                      controller: _mobileNumberController,
+                                      controller: authentificationController
+                                          .passwordController,
                                       keyboardType: TextInputType.text,
-                                      obscureText: isTextWritten,
+                                      obscureText: true,
                                     ),
                                     createClearText()
                                   ],
                                 ),
                                 decoration: BoxDecoration(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                        BorderRadius.all(Radius.circular(4)),
                                     border: Border.all(
                                         width: 1, color: Colors.grey.shade400)),
                               ),
@@ -302,16 +207,31 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.only(right: 16, left: 16),
                         child: RaisedButton(
                           onPressed: () {
-                            Get.to(HomePage());
+                            loginAndAuthentificationUser();
                           },
-                          child: Text(
-                            "Sign In",
-                            style: CustomTextStyle.mediumTextStyle
-                                .copyWith(color: Colors.white, fontSize: 14),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Sign In",
+                                style: CustomTextStyle.mediumTextStyle.copyWith(
+                                    color: Colors.white, fontSize: 14),
+                              ),
+                              Visibility(
+                                  visible:
+                                      authentificationController.snapValue ==""
+                                          ? false
+                                          : true,
+                                  child: SpinKitThreeBounce(
+                                    color: Colors.white,
+                                    size: 20.0,
+                                  ))
+                            ],
                           ),
                           textColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
                           color: Colors.red,
                         ),
                       ),
@@ -340,7 +260,8 @@ class _LoginState extends State<Login> {
                           ),
                           textColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(24))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(24))),
                           color: CustomColors.COLOR_GOOGLE,
                         ),
                       ),
@@ -356,7 +277,8 @@ class _LoginState extends State<Login> {
                           ),
                           textColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(24))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(24))),
                           color: CustomColors.COLOR_FACEBOOK,
                         ),
                       ),
@@ -369,13 +291,15 @@ class _LoginState extends State<Login> {
                             children: <Widget>[
                               GestureDetector(
                                 onTap: () {
-                                  Get.to( ForgotPassword());
+                                  Get.to(ForgotPassword());
                                 },
                                 child: Container(
                                   child: Text(
                                     "I forgot my password",
-                                    style: CustomTextStyle.mediumTextStyle.copyWith(
-                                        color: Colors.grey.shade600, fontSize: 12),
+                                    style: CustomTextStyle.mediumTextStyle
+                                        .copyWith(
+                                            color: Colors.grey.shade600,
+                                            fontSize: 12),
                                   ),
                                   margin: EdgeInsets.only(left: 18),
                                 ),
@@ -403,27 +327,23 @@ class _LoginState extends State<Login> {
                       SizedBox(height: 20),
                       Align(
                           alignment: Alignment.center,
-                          child:  Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text("Don't have an account ? "),
                               GestureDetector(
-                                  onTap: ()=>{
-                                    Get.to(SignUpPage())
-                                  },
-                                  child: Text("SignUp",style:
-                                  GoogleFonts.nunito(
-                                    textStyle: TextStyle(
-                                        color: Colors.red,
-                                        letterSpacing: .1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                              )
+                                  onTap: () => {Get.to(SignUpPage())},
+                                  child: Text("SignUp",
+                                      style: GoogleFonts.nunito(
+                                        textStyle: TextStyle(
+                                            color: Colors.red,
+                                            letterSpacing: .1),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      )))
                             ],
-                          )
-                      ),
+                          )),
                       SizedBox(height: 20)
                     ],
                   ),
@@ -468,6 +388,43 @@ class _LoginState extends State<Login> {
         child: Container(),
       );
     }
+  }
+
+  void loginAndAuthentificationUser() async {
+    UserCredential loginResult = (await _firebaseAuth
+        .signInWithEmailAndPassword(
+            email: authentificationController.emailController.text,
+            password: authentificationController.passwordController.text)
+        .catchError((onError) {
+      print(onError.toString());
+    }));
+    User firebaseUser = loginResult.user;
+    print(firebaseUser);
+    if (firebaseUser != null) {
+      usersRef.child(firebaseUser.uid).once().then((snapshot) => {
+            snapshot.value["userType"] == "Driver"
+                ? Get.to(DashboardDriverPage())
+                : Get.to(HomePage()),
+            authentificationController.snapValue = snapshot.value,
+            authentificationController.controllerReset()
+          });
+    }
+    /* if (firebaseUser != null){
+       usersRef.child(firebaseUser.uid).once().then((value) => (DataSnapshot snapshot){
+
+          if(snapshot.value!=null){
+            print("Logged");
+            Get.to(HomePage());
+          }
+          else{
+            _firebaseAuth.signOut();
+          }
+       });
+    }
+    else {
+      print("New user");
+      Get.to(HomePage());
+    }*/
   }
 
   var border = OutlineInputBorder(

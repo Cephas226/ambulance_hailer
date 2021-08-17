@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:getx_app/models/canceltrip.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/models/canceltrip.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 import 'package:get/get.dart';
 class CancelTripFeedback extends StatefulWidget {
   @override

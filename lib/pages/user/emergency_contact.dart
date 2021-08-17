@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:getx_app/pages/home/home_page.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/pages/home/home_page.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 
 
 class EmergencyContacts extends StatefulWidget {

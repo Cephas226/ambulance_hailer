@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:getx_app/pages/authentification/verify_code.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/pages/authentification/verify_code.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override

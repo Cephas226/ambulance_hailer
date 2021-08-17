@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 import 'splash_screen_controller.dart';
 
 class SplashScreen extends GetView<SplashScreenController> {

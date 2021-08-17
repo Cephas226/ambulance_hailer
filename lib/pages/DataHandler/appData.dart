@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:getx_app/models/addresse.dart';
+import 'package:ambulance_hailer/models/addresse.dart';
 
 class AppData extends ChangeNotifier
 {

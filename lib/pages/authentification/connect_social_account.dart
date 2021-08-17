@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:getx_app/utils/CustomColors.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/utils/CustomColors.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 
 class CreateSocialAccount extends StatefulWidget {
   @override

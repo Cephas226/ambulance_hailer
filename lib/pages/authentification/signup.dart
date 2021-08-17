@@ -1,15 +1,11 @@
+import 'package:ambulance_hailer/pages/home/home_controller.dart';
+import 'package:ambulance_hailer/pages/home/home_page.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:getx_app/main.dart';
-import 'package:getx_app/pages/home/home_controller.dart';
-import 'package:getx_app/pages/home/home_page.dart';
-import 'package:getx_app/utils/CustomColors.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
 
+import '../../main.dart';
 import 'authentification_controller.dart';
-import 'connect_social_account.dart';
-import 'forgot_password.dart';
-import 'login_password.dart';
 import 'package:get/get.dart';
 class SignUpPage extends StatefulWidget {
   @override
@@ -365,12 +361,102 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       SizedBox(height: 20),
                       SizedBox(height: 20),
+                      Visibility(
+                          visible: authentificationController.selectedToggleUserType.first ? true : false,
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(right: 14, left: 14),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: <Widget>[
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                border: border,
+                                                enabledBorder: border,
+                                                focusedBorder: border,
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 8, right: 32, top: 6, bottom: 6),
+                                                hintText: "Your Car Model",
+                                                hasFloatingPlaceholder: true,
+                                                hintStyle: CustomTextStyle.regularTextStyle
+                                                    .copyWith(
+                                                    color: Colors.grey, fontSize: 12),
+                                                labelStyle: CustomTextStyle.regularTextStyle
+                                                    .copyWith(
+                                                    color: Colors.black, fontSize: 12),
+                                              ),
+                                              controller: authentificationController.carModelController,
+                                              keyboardType: TextInputType.text,
+                                            ),
+                                          ],
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(4)),
+                                            border: Border.all(
+                                                width: 1, color: Colors.grey.shade400)),
+                                      ),
+                                      flex: 100,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 14),
+                              Container(
+                                margin: EdgeInsets.only(right: 14, left: 14),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: <Widget>[
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                border: border,
+                                                enabledBorder: border,
+                                                focusedBorder: border,
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 8, right: 32, top: 6, bottom: 6),
+                                                hintText: "Car Number",
+                                                hasFloatingPlaceholder: true,
+                                                hintStyle: CustomTextStyle.regularTextStyle
+                                                    .copyWith(
+                                                    color: Colors.grey, fontSize: 12),
+                                                labelStyle: CustomTextStyle.regularTextStyle
+                                                    .copyWith(
+                                                    color: Colors.black, fontSize: 12),
+                                              ),
+                                              controller: authentificationController.carNumberController,
+                                              keyboardType: TextInputType.text,
+                                            ),
+                                          ],
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(4)),
+                                            border: Border.all(
+                                                width: 1, color: Colors.grey.shade400)),
+                                      ),
+                                      flex: 100,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
                       Container(
                         width: double.infinity,
                         margin: EdgeInsets.only(right: 16, left: 16),
                         child: RaisedButton(
                           onPressed: () {registerNewUser();
-                           // Get.to(HomePage());
+                            // Get.to(HomePage());
                           },
                           child: Text(
                             "Sign Up",
@@ -446,20 +532,43 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }*/
   void registerNewUser() async{
-    Map userDataMap ={
-      "name":authentificationController.nameController.text.trim(),
-      "email":authentificationController.emailController.text.trim(),
-      "phone":authentificationController.phoneController.text.trim(),
-      "userType":authentificationController.selectedToggleUserType.first
-    };
-    print(userDataMap);
-    final UserCredential authResult = (await firebaseAuth.createUserWithEmailAndPassword(email: authentificationController.emailController.text, password: authentificationController.passwordController.text)
-        .catchError((errMsg){
-      print(errMsg);
-    }));
-    print(authResult);
+    final UserCredential authResult = (await firebaseAuth.createUserWithEmailAndPassword(email: authentificationController.emailController.text, password: authentificationController.passwordController.text));
     final User firebaseUser = authResult.user;
-    usersRef.child(firebaseUser.uid).set(userDataMap).onError((error, stackTrace) => print(error));
+    if (firebaseUser != null){
+      if (authentificationController.selectedToggleUserType.first){
+        Map userDataMap ={
+          "name":authentificationController.nameController.text.trim(),
+          "email":authentificationController.emailController.text.trim(),
+          "phone":authentificationController.phoneController.text.trim(),
+          "userType":authentificationController.selectedToggleUserType.first?"Driver":"Rider",
+        };
+        Get.off(HomePage());
+      }
+      else {
+        Map userDataMap ={
+          "name":authentificationController.nameController.text.trim(),
+          "email":authentificationController.emailController.text.trim(),
+          "phone":authentificationController.phoneController.text.trim(),
+          "userType":authentificationController.selectedToggleUserType.first?"Driver":"Rider",
+          "carModel":authentificationController.carModelController.text,
+          "carNumber":authentificationController.carNumberController.text
+        };
+        usersRef.child(firebaseUser.uid).set(userDataMap).onError((error, stackTrace) => print(error));
+        authentificationController.controllerReset();
+        Get.off(HomePage());
+      }
+    }
+    else {
+      print("error");
+    }
+    /*if (authentificationController.validateCreds()) {
+      final UserCredential authResult = (await firebaseAuth.createUserWithEmailAndPassword(email: authentificationController.emailController.text, password: authentificationController.passwordController.text)
+          .catchError((errMsg){
+        print(errMsg);
+      }));
+      print(authResult);
+
+    }*/
   }
   var border = OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(4)),

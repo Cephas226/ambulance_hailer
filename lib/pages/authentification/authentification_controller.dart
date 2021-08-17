@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:getx_app/main.dart';
-import 'package:getx_app/pages/home/home_page.dart';
+import 'package:ambulance_hailer/main.dart';
+import 'package:ambulance_hailer/pages/home/home_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'myValadator.dart';
@@ -14,7 +14,9 @@ class AuthentificationController extends GetxController {
   TextEditingController phoneController;
   TextEditingController passwordController;
   TextEditingController emailController;
-
+  TextEditingController carModelController;
+  TextEditingController carNumberController;
+   String snapValue="";
   @override
   Future<void> onInit() async {
     nameController = TextEditingController();
@@ -46,5 +48,12 @@ class AuthentificationController extends GetxController {
     }
     return validated;
   }
-
+  controllerReset() {
+    nameController.text = '';
+    phoneController.text = '';
+    emailController.text="";
+    passwordController.text = '';
+    selectedToggleUserType = [false, false];
+    snapValue='';
+  }
 }

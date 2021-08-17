@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:getx_app/library/place_request.dart';
+import 'package:ambulance_hailer/library/place_request.dart';
 
 class AddressSearch extends SearchDelegate<Suggestion> {
   AddressSearch(this.sessionToken) {

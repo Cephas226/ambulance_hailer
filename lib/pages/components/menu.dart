@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:getx_app/models/menu_list_item.dart';
-import 'package:getx_app/pages/authentification/help_support.dart';
-import 'package:getx_app/pages/trip/news_offers.dart';
-import 'package:getx_app/pages/user/RateCard.dart';
-import 'package:getx_app/pages/user/emergency_contact.dart';
-import 'package:getx_app/pages/trip/my_trips.dart';
+import 'package:ambulance_hailer/models/menu_list_item.dart';
+import 'package:ambulance_hailer/pages/authentification/help_support.dart';
+import 'package:ambulance_hailer/pages/trip/news_offers.dart';
+import 'package:ambulance_hailer/pages/user/RateCard.dart';
+import 'package:ambulance_hailer/pages/user/emergency_contact.dart';
+import 'package:ambulance_hailer/pages/trip/my_trips.dart';
 import 'package:get/get.dart';
-import 'package:getx_app/pages/user/profile.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
-import 'package:getx_app/utils/menu_title.dart';
+import 'package:ambulance_hailer/pages/user/profile.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/utils/menu_title.dart';
 
 
 class Menu extends StatefulWidget {

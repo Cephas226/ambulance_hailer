@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:getx_app/pages/home/home_controller.dart';
+import 'package:ambulance_hailer/pages/home/home_controller.dart';
 import 'package:get/get.dart';
 
 import 'CustomTextStyle.dart';

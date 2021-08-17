@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ambulance_hailer/models/allUsers.dart';
+import 'package:ambulance_hailer/models/directions_model.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:getx_app/library/configMaps.dart';
-import 'package:getx_app/models/allUsers.dart';
-import 'package:getx_app/models/directions_model.dart';
-import 'package:getx_app/models/route.dart';
+import 'package:ambulance_hailer/models/route.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
+
+import 'configMaps.dart';
 
 class Place {
   String streetNumber;

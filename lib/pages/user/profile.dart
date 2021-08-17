@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:getx_app/utils/CustomColors.dart';
-import 'package:getx_app/utils/CustomTextStyle.dart';
-import 'package:getx_app/utils/DottedLine.dart';
+import 'package:ambulance_hailer/utils/CustomColors.dart';
+import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
+import 'package:ambulance_hailer/utils/DottedLine.dart';
 
 class Profile extends StatefulWidget {
   @override
