@@ -23,6 +23,8 @@ class AuthentificationController extends GetxController {
     phoneController = TextEditingController();
     passwordController = TextEditingController();
     emailController = TextEditingController();
+    carModelController = TextEditingController();
+    carNumberController = TextEditingController();
     selectedToggleUserType = [false, false];
     super.onInit();
   }
@@ -53,6 +55,8 @@ class AuthentificationController extends GetxController {
     phoneController.text = '';
     emailController.text="";
     passwordController.text = '';
+    carNumberController.text="";
+    carModelController.text="";
     selectedToggleUserType = [false, false];
     snapValue='';
   }

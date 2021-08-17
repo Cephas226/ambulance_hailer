@@ -1,3 +1,4 @@
+import 'package:ambulance_hailer/driver/dashboard/dashboard_page.dart';
 import 'package:ambulance_hailer/pages/home/home_controller.dart';
 import 'package:ambulance_hailer/pages/home/home_page.dart';
 import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
@@ -541,8 +542,12 @@ class _SignUpPageState extends State<SignUpPage> {
           "email":authentificationController.emailController.text.trim(),
           "phone":authentificationController.phoneController.text.trim(),
           "userType":authentificationController.selectedToggleUserType.first?"Driver":"Rider",
+          "carModel":authentificationController.carModelController.text,
+          "carNumber":authentificationController.carNumberController.text
         };
-        Get.off(HomePage());
+        print(authentificationController.carModelController.text);
+        usersRef.child(firebaseUser.uid).set(userDataMap).onError((error, stackTrace) => print(error));
+        Get.off(DashboardDriverPage());
       }
       else {
         Map userDataMap ={
@@ -550,13 +555,12 @@ class _SignUpPageState extends State<SignUpPage> {
           "email":authentificationController.emailController.text.trim(),
           "phone":authentificationController.phoneController.text.trim(),
           "userType":authentificationController.selectedToggleUserType.first?"Driver":"Rider",
-          "carModel":authentificationController.carModelController.text,
-          "carNumber":authentificationController.carNumberController.text
         };
+        print(userDataMap);
         usersRef.child(firebaseUser.uid).set(userDataMap).onError((error, stackTrace) => print(error));
-        authentificationController.controllerReset();
         Get.off(HomePage());
       }
+      authentificationController.controllerReset();
     }
     else {
       print("error");

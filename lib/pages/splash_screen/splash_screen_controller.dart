@@ -1,4 +1,10 @@
+import 'package:ambulance_hailer/driver/dashboard/dashboard_page.dart';
+import 'package:ambulance_hailer/pages/authentification/login.dart';
+import 'package:ambulance_hailer/pages/home/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+
+import '../../main.dart';
 class SplashScreenController extends GetxController {
 
   @override
@@ -6,7 +12,22 @@ class SplashScreenController extends GetxController {
     super.onInit();
     Future.delayed(Duration(seconds: 5), () {
       print("After 5 seconds");
-      Get.offNamedUntil('/login', (route) => false);
+      FirebaseAuth.instance.currentUser==null
+          ?Get.to(LoginPage()):
+      FirebaseAuth.instance.currentUser.uid;
+      usersRef.child(FirebaseAuth.instance.currentUser.uid).once().then((snapshot) => {
+        snapshot.value["userType"] == "Driver"
+            ? Get.to(DashboardDriverPage())
+            : Get.to(HomePage()),
+      });
+      //Get.offNamedUntil('/login', (route) => false);
+
+      /*usersRef.child(firebaseUser.uid).once().then((snapshot) => {
+        snapshot.value["userType"] == "Driver"
+            ? Get.to(DashboardDriverPage())
+            : Get.to(HomePage()),
+        authentificationController.snapValue = snapshot.value,
+      });*/
     });
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ambulance_hailer/pages/DataHandler/appData.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'library/configMaps.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 import 'themes/app_theme.dart';
@@ -13,6 +14,8 @@ main() async {
   runApp(MyApp());
 }
 DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("users");
+DatabaseReference rideRequestRef = FirebaseDatabase.instance.
+  reference().child("users").child(currentfirebaseUser.uid).child("newRide");
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

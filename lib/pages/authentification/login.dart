@@ -14,12 +14,12 @@ import 'authentification_controller.dart';
 import 'forgot_password.dart';
 import 'package:get/get.dart';
 
-class Login extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
   var selectedItem;
   TextEditingController _mobileNumberController = TextEditingController();
   TextEditingController _mobileIndicatifController;
@@ -401,14 +401,15 @@ class _LoginState extends State<Login> {
     User firebaseUser = loginResult.user;
     print(firebaseUser);
     if (firebaseUser != null) {
+
       usersRef.child(firebaseUser.uid).once().then((snapshot) => {
             snapshot.value["userType"] == "Driver"
                 ? Get.to(DashboardDriverPage())
                 : Get.to(HomePage()),
             authentificationController.snapValue = snapshot.value,
-            authentificationController.controllerReset()
           });
     }
+    authentificationController.controllerReset();
     /* if (firebaseUser != null){
        usersRef.child(firebaseUser.uid).once().then((value) => (DataSnapshot snapshot){
 

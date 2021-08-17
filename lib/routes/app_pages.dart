@@ -14,7 +14,7 @@ class AppPages {
     ),
     GetPage(
         name: AppRoutes.LOGIN,
-        page: () => Login()
+        page: () => LoginPage()
     ),
     GetPage(
         name: AppRoutes.SPLASH_SCREEN,
