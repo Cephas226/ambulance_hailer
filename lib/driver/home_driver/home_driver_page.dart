@@ -65,6 +65,9 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
 
   // Subscription
   StreamSubscription subscription;
+  Color driverStatusColor=Colors.black;
+  String driversStatusText='Offline Now - Go online';
+  bool isDriverAvailable=false;
   //----
   Completer <GoogleMapController> _controllerGroupMap = Completer();
   GoogleMapController newGoogleMapController;
@@ -410,8 +413,25 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                           children: [
                             ElevatedButton(
                               onPressed: ()async {
-                                makeDriverOnlineNow();
-                                getLocationLiveUpdates();
+                                if (isDriverAvailable!=true){
+                                  print('Online Now');
+                                  makeDriverOnlineNow();
+                                  getLocationLiveUpdates();
+                                  setState(() {
+                                    driverStatusColor = Colors.green;
+                                    driversStatusText="Online Now";
+                                    isDriverAvailable=true;
+                                  });
+                                }
+                                else {
+                                  print('Offline Now - Go online');
+                                  setState(() {
+                                    driverStatusColor = Colors.black;
+                                    driversStatusText="Offline Now - Go online";
+                                    isDriverAvailable=false;
+                                  });
+                                  makeDriverOfflineNow();
+                                }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -419,7 +439,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Offline Now - Go online'.toUpperCase(),
+                                      driversStatusText,
                                       style: CustomTextStyle.mediumTextStyle.copyWith(
                                           color: Colors.white,
                                           fontSize: 15,
@@ -433,7 +453,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                                 )
                               ),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
+                                primary: driverStatusColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
@@ -582,7 +602,9 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
      homeDriverStreamSubcription = Geolocator.getPositionStream()
          .listen((Position position) {
           currentPosition = position;
-          Geofire.setLocation( currentfirebaseUser.uid,position.latitude, position.longitude);
+         if (isDriverAvailable==true){
+           Geofire.setLocation( currentfirebaseUser.uid,position.latitude, position.longitude);
+         }
           //LatLng latLong = LatLng(position.latitude, position.longitude);
           mapController.animateCamera(
             CameraUpdate.newCameraPosition(
@@ -593,5 +615,11 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
             ),
           );
      });
+  }
+  void makeDriverOfflineNow(){
+    Geofire.removeLocation(currentfirebaseUser.uid);
+    rideRequestRef.onDisconnect();
+    rideRequestRef.remove();
+    rideRequestRef=null;
   }
 }
