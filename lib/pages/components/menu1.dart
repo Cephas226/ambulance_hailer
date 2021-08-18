@@ -1,3 +1,4 @@
+import 'package:ambulance_hailer/library/configMaps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -211,7 +212,7 @@ import 'package:ambulance_hailer/pages/user/profile.dart';class MenuOnePage exte
                 padding: const EdgeInsets.all(16.0),
                 shape: CircleBorder(),
                 onPressed: () {
-                  Navigator.pop(context);
+                  firebaseAuth.signOut();
                 },
                 color: Colors.grey.shade800,
                 child: Icon(

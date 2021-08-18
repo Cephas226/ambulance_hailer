@@ -535,6 +535,7 @@ class _SignUpPageState extends State<SignUpPage> {
   void registerNewUser() async{
     final UserCredential authResult = (await firebaseAuth.createUserWithEmailAndPassword(email: authentificationController.emailController.text, password: authentificationController.passwordController.text));
     final User firebaseUser = authResult.user;
+    print(firebaseUser);
     if (firebaseUser != null){
       if (authentificationController.selectedToggleUserType.first){
         Map userDataMap ={

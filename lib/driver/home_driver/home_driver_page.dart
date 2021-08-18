@@ -1,14 +1,20 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:ambulance_hailer/main.dart';
 import 'package:ambulance_hailer/pages/home/home_controller.dart';
 import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:get/get.dart';
 import 'package:ambulance_hailer/assistant/assistantMethods.dart';
 import 'package:ambulance_hailer/library/configMaps.dart';
@@ -23,7 +29,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:rxdart/rxdart.dart';
 import 'home_driver_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +42,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
   Set<Marker> markers = new Set();
   HomeController hController = Get.put(HomeController());
   String _placeDistance;
-  CameraPosition initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
+  CameraPosition initialLocation = CameraPosition(target: LatLng(33.609434051916494, -7.623460799015407),zoom: 14.4746);
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
   LatLng initialPosition = LatLng(33.609434051916494, -7.623460799015407);
@@ -52,11 +58,23 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
   final destinationAddressController = TextEditingController();
   final startAddressFocusNode = FocusNode();
   final destinationAddressFocusNode = FocusNode();
+  final firestore = FirebaseFirestore.instance;
+  Geoflutterfire geo = Geoflutterfire();
+  BehaviorSubject<double> radius = BehaviorSubject.seeded(100.0);
+  Stream<dynamic> query;
+
+  // Subscription
+  StreamSubscription subscription;
+  //----
+  Completer <GoogleMapController> _controllerGroupMap = Completer();
+  GoogleMapController newGoogleMapController;
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
     GoogleMapsServices.getCurrentOnLineUserInfo();
+    String pathToReference = "availableDriver";
+    Geofire.initialize(pathToReference);
   }
 
   void saveRideRequest() async {
@@ -324,7 +342,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(position.latitude, position.longitude),
-              zoom: 18.0,
+              zoom: 14.0,
             ),
           ),
         );
@@ -369,19 +387,17 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                       height: double.infinity,
                       child:
                       GoogleMap(
-                        markers: Set<Marker>.from(markers),
+                        //markers: Set<Marker>.of(markers),
                         initialCameraPosition: initialLocation,
                         myLocationEnabled: true,
                         myLocationButtonEnabled: false,
                         mapType: MapType.normal,
-                        zoomGesturesEnabled: true,
-                        zoomControlsEnabled: false,
-                        polylines: Set<Polyline>.of(polylines.values),
                         onMapCreated: (GoogleMapController controller) {
                           mapController = controller;
+                          _getCurrentLocation();
                         },
                       )),
-                  SafeArea(
+                      SafeArea(
                     child: Align(
                       alignment: Alignment.topCenter,
                       child:
@@ -393,14 +409,17 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: ()async {},
+                              onPressed: ()async {
+                                makeDriverOnlineNow();
+                                getLocationLiveUpdates();
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Now online'.toUpperCase(),
+                                      'Offline Now - Go online'.toUpperCase(),
                                       style: CustomTextStyle.mediumTextStyle.copyWith(
                                           color: Colors.white,
                                           fontSize: 15,
@@ -424,7 +443,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                       ),
                     ),
                   ),
-                  SafeArea(
+                      SafeArea(
                     child: Align(
                       alignment: Alignment.bottomRight,
                       child: Padding(
@@ -458,10 +477,121 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                       ),
                     ),
                   ),
+       /*    Positioned(
+               bottom: 50,
+               left: 10,
+               child: Slider(
+                 min: 100.0,
+                 max: 500.0,
+                 divisions: 4,
+                 value: radius.value,
+                 label: 'Radius ${radius.value}km',
+                 activeColor: Colors.green,
+                 inactiveColor: Colors.green.withOpacity(0.2),
+                 onChanged: updateQuery,
+               )
+           )*/
                 ]));
               },
             ),
           ),
         ));
+  }
+/*  Future<DocumentReference>  makeDriverOnlineNow() async {
+    Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    currentPosition=position;
+    GeoFirePoint point = geo.point(latitude: position.latitude, longitude: position.longitude);
+    //rideRequestRef.set(point);
+    return  firestore.collection('availableDriver').add({
+      'position': point.data,
+      'driverEmail':currentfirebaseUser.email,
+      'driverUid': currentfirebaseUser.uid
+    });
+  }
+
+
+  void updateMarkers(List<DocumentSnapshot> documentList) {
+    print(documentList);
+    //mapController.clearMarkers();
+   // markers.clear();
+    int id = Random().nextInt(500);
+    documentList.forEach((DocumentSnapshot document) {
+      GeoPoint pos = document.data()['position']['geopoint'];
+      double distance = document.data()['distance'];
+      var marker = Marker(
+        markerId: MarkerId(id.toString()),
+        position: LatLng(pos.latitude, pos.longitude),
+        infoWindow: InfoWindow(
+          title: 'Magic Marker'+'$distance kilometers from query center',
+          //snippet:startAddress,
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+      );
+      markers.add(Marker(
+        markerId: MarkerId(id.toString()),
+        position: LatLng(pos.latitude, pos.longitude),
+        infoWindow: InfoWindow(
+          title: 'Magic Marker'+'$distance kilometers from query center',
+          //snippet:startAddress,
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+      //mapController.addMarker(marker);
+    });
+  }*/
+/*  startQuery() async {
+    // Get users location
+    Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    currentPosition=position;
+    double lat = position.latitude;
+    double lng = position.longitude;
+
+
+    // Make a referece to firestore
+    var ref = firestore.collection('locations');
+    GeoFirePoint center = geo.point(latitude: lat, longitude: lng);
+
+    // subscribe to query
+    print(markers);
+    subscription = radius.switchMap((rad) {
+      return geo.collection(collectionRef: ref).within(
+          center: center,
+          radius: rad,
+          field: 'position',
+          strictMode: true
+      );
+    }).listen(updateMarkers);
+  }
+  updateQuery(value) {
+    setState(() {
+      radius.add(value);
+    });
+  }*/
+  void makeDriverOnlineNow() async {
+ Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+   currentPosition=position;
+    print(currentfirebaseUser.uid);
+   Geofire.setLocation( currentfirebaseUser.uid,position.latitude, position.longitude);
+    rideRequestRef.onValue.listen((event) {
+
+    });
+   rideRequestRef.onValue.listen((event) {
+    });
+  }
+  void getLocationLiveUpdates(){
+     homeDriverStreamSubcription = Geolocator.getPositionStream()
+         .listen((Position position) {
+          currentPosition = position;
+          Geofire.setLocation( currentfirebaseUser.uid,position.latitude, position.longitude);
+          //LatLng latLong = LatLng(position.latitude, position.longitude);
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 14.0,
+              ),
+            ),
+          );
+     });
   }
 }

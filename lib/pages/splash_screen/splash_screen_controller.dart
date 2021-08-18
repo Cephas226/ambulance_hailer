@@ -13,12 +13,12 @@ class SplashScreenController extends GetxController {
     Future.delayed(Duration(seconds: 5), () {
       print("After 5 seconds");
       FirebaseAuth.instance.currentUser==null
-          ?Get.to(LoginPage()):
+          ?Get.off(LoginPage()):
       FirebaseAuth.instance.currentUser.uid;
       usersRef.child(FirebaseAuth.instance.currentUser.uid).once().then((snapshot) => {
         snapshot.value["userType"] == "Driver"
-            ? Get.to(DashboardDriverPage())
-            : Get.to(HomePage()),
+            ? Get.off(DashboardDriverPage())
+            : Get.off(HomePage()),
       });
       //Get.offNamedUntil('/login', (route) => false);
 

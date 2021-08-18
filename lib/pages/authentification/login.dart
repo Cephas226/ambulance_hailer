@@ -1,4 +1,5 @@
 import 'package:ambulance_hailer/driver/dashboard/dashboard_page.dart';
+import 'package:ambulance_hailer/library/configMaps.dart';
 import 'package:ambulance_hailer/pages/authentification/signup.dart';
 import 'package:ambulance_hailer/pages/home/home_page.dart';
 import 'package:ambulance_hailer/utils/CustomColors.dart';
@@ -25,7 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _mobileIndicatifController;
   bool isTextWritten = false;
   var selectedValue = "+233";
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   AuthentificationController authentificationController =
       Get.put(AuthentificationController());
   createCountryCodeList() {
@@ -391,13 +391,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginAndAuthentificationUser() async {
-    UserCredential loginResult = (await _firebaseAuth
+    UserCredential loginResult = (await firebaseAuth
         .signInWithEmailAndPassword(
             email: authentificationController.emailController.text,
             password: authentificationController.passwordController.text)
         .catchError((onError) {
       print(onError.toString());
     }));
+    print(loginResult);
     User firebaseUser = loginResult.user;
     print(firebaseUser);
     if (firebaseUser != null) {

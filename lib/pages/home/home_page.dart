@@ -4,27 +4,17 @@ import 'dart:ui';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
-import 'package:ambulance_hailer/assistant/assistantMethods.dart';
 import 'package:ambulance_hailer/library/configMaps.dart';
 import 'package:ambulance_hailer/library/place_request.dart';
-import 'package:ambulance_hailer/pages/DataHandler/appData.dart';
-import 'package:ambulance_hailer/pages/components/menu.dart';
-import 'package:ambulance_hailer/pages/components/menu1.dart';
-import 'package:ambulance_hailer/pages/trip/request_driver_trip.dart';
-import 'package:ambulance_hailer/pages/trip/payment_dialog.dart';
-import 'package:ambulance_hailer/utils/bottom_sheet.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'home_controller.dart';
-import 'package:provider/provider.dart';
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -170,7 +160,6 @@ class _HomePageState extends State<HomePage> {
               ImageConfiguration(devicePixelRatio: 1.5),
               'images/taxi.png') //Icon for Marker
           ));
-
       markers.add(Marker(
         //add second marker
         markerId: MarkerId(initialPosition.toString() + 2.0.toString()),
@@ -184,7 +173,6 @@ class _HomePageState extends State<HomePage> {
             ImageConfiguration(devicePixelRatio: 1.5),
             'images/taxi.png'), //Icon for Marker
       ));
-
       markers.add(Marker(
         //add second marker
         markerId: MarkerId(initialPosition.toString() + 3.0.toString()),
