@@ -13,12 +13,14 @@ main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   //currentfirebaseUser =FirebaseAuth.instance.currentUser;
+  DatabaseReference driverRequestRef;
   var db = FirebaseDatabase.instance.reference().child("users");
   db.once().then((DataSnapshot snapshot){
     Map<dynamic, dynamic> values = snapshot.value;
     values.forEach((key,values) {
       if (values["userType"]=="Driver"){
         currentfirebaseDriver=FirebaseAuth.instance.currentUser;
+        driverRequestRef = FirebaseDatabase.instance.reference().child("users");
       }
       else {
         currentfirebaseUser=FirebaseAuth.instance.currentUser;
@@ -28,7 +30,9 @@ main() async {
   runApp(MyApp());
 }
 DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("users");
+DatabaseReference newRequestRef = FirebaseDatabase.instance.reference().child("Ride Requests");
 DatabaseReference rideRequestRef = FirebaseDatabase.instance.reference().child("users").child(currentfirebaseUser.uid).child("newRide");
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
