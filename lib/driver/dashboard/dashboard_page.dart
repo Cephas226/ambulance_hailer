@@ -5,6 +5,7 @@ import 'package:ambulance_hailer/library/configMaps.dart';
 import 'package:ambulance_hailer/pages/authentification/login.dart';
 import 'package:ambulance_hailer/pages/home/home_page.dart';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "package:get/get.dart";
@@ -52,8 +53,7 @@ class _DashboardDriverPageState extends State<DashboardDriverPage> {
         backgroundColor: Colors.grey[100],
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print("toto");
-            firebaseAuth.signOut();
+            FirebaseAuth.instance.signOut();
             Get.off(LoginPage());
           },
           child: Icon(Icons.power_settings_new),

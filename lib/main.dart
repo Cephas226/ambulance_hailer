@@ -12,7 +12,19 @@ import 'package:provider/provider.dart';
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  currentfirebaseUser =FirebaseAuth.instance.currentUser;
+  //currentfirebaseUser =FirebaseAuth.instance.currentUser;
+  var db = FirebaseDatabase.instance.reference().child("users");
+  db.once().then((DataSnapshot snapshot){
+    Map<dynamic, dynamic> values = snapshot.value;
+    values.forEach((key,values) {
+      if (values["userType"]=="Driver"){
+        currentfirebaseDriver=FirebaseAuth.instance.currentUser;
+      }
+      else {
+        currentfirebaseUser=FirebaseAuth.instance.currentUser;
+      }
+    });
+  });
   runApp(MyApp());
 }
 DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("users");

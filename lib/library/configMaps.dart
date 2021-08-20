@@ -5,6 +5,7 @@ import 'package:ambulance_hailer/models/allUsers.dart';
 import 'package:geolocator/geolocator.dart';
 User firebaseUser;
 User currentfirebaseUser;
+User currentfirebaseDriver;
 Users userCurrentInfo;
 StreamSubscription <Position> homeDriverStreamSubcription;
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:ambulance_hailer/assistant/requestAssistant.dart';
 import 'package:ambulance_hailer/library/place_request.dart';
@@ -22,5 +24,10 @@ class AssistantMethods {
         Provider.of<AppData>(context,listen:false).updatePickupLocationAddress(userPickLocation);
     }
     return placeAddress;
+  }
+  static double createRadomNumber(int num)
+  {
+    var randomNumber = Random().nextInt(num);
+    return  randomNumber.toDouble();
   }
 }

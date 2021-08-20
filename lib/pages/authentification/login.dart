@@ -308,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Get.to(HomePage());
+                              Get.to(ForgotPassword());
                             },
                             child: Container(
                               width: 40,
@@ -405,28 +405,14 @@ class _LoginPageState extends State<LoginPage> {
 
       usersRef.child(firebaseUser.uid).once().then((snapshot) => {
             snapshot.value["userType"] == "Driver"
-                ? Get.to(DashboardDriverPage())
-                : Get.to(HomePage()),
-            authentificationController.snapValue = snapshot.value,
+                ? Get.off(DashboardDriverPage())
+                : Get.off(HomePage()),
+            setState((){
+              authentificationController.snapValue = snapshot.value;
+            })
           });
     }
     authentificationController.controllerReset();
-    /* if (firebaseUser != null){
-       usersRef.child(firebaseUser.uid).once().then((value) => (DataSnapshot snapshot){
-
-          if(snapshot.value!=null){
-            print("Logged");
-            Get.to(HomePage());
-          }
-          else{
-            _firebaseAuth.signOut();
-          }
-       });
-    }
-    else {
-      print("New user");
-      Get.to(HomePage());
-    }*/
   }
 
   var border = OutlineInputBorder(

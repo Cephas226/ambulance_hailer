@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:ambulance_hailer/Notifications/pushNotificationService.dart';
 import 'package:ambulance_hailer/main.dart';
 import 'package:ambulance_hailer/pages/home/home_controller.dart';
 import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
@@ -78,6 +79,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
     GoogleMapsServices.getCurrentOnLineUserInfo();
     String pathToReference = "availableDriver";
     Geofire.initialize(pathToReference);
+    getCurrentDriverInfo();
   }
 
   void saveRideRequest() async {
@@ -372,6 +374,25 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
     }
   }
 
+
+  void getCurrentDriverInfo() async {
+    var db = FirebaseDatabase.instance.reference().child("users");
+    db.once().then((DataSnapshot snapshot){
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key,values) {
+        if (values["userType"]=="Driver"){
+          currentfirebaseDriver=FirebaseAuth.instance.currentUser;
+        }
+        else {
+          currentfirebaseUser=FirebaseAuth.instance.currentUser;
+        }
+      });
+    });
+    PushNotificationService pushNotificationService =  PushNotificationService();
+    pushNotificationService.initialize();
+    pushNotificationService.getToken(currentfirebaseDriver);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = Get.size;
@@ -517,85 +538,15 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
           ),
         ));
   }
-/*  Future<DocumentReference>  makeDriverOnlineNow() async {
-    Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    currentPosition=position;
-    GeoFirePoint point = geo.point(latitude: position.latitude, longitude: position.longitude);
-    //rideRequestRef.set(point);
-    return  firestore.collection('availableDriver').add({
-      'position': point.data,
-      'driverEmail':currentfirebaseUser.email,
-      'driverUid': currentfirebaseUser.uid
-    });
-  }
 
-
-  void updateMarkers(List<DocumentSnapshot> documentList) {
-    print(documentList);
-    //mapController.clearMarkers();
-   // markers.clear();
-    int id = Random().nextInt(500);
-    documentList.forEach((DocumentSnapshot document) {
-      GeoPoint pos = document.data()['position']['geopoint'];
-      double distance = document.data()['distance'];
-      var marker = Marker(
-        markerId: MarkerId(id.toString()),
-        position: LatLng(pos.latitude, pos.longitude),
-        infoWindow: InfoWindow(
-          title: 'Magic Marker'+'$distance kilometers from query center',
-          //snippet:startAddress,
-        ),
-        icon: BitmapDescriptor.defaultMarker,
-      );
-      markers.add(Marker(
-        markerId: MarkerId(id.toString()),
-        position: LatLng(pos.latitude, pos.longitude),
-        infoWindow: InfoWindow(
-          title: 'Magic Marker'+'$distance kilometers from query center',
-          //snippet:startAddress,
-        ),
-        icon: BitmapDescriptor.defaultMarker,
-      ));
-      //mapController.addMarker(marker);
-    });
-  }*/
-/*  startQuery() async {
-    // Get users location
-    Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    currentPosition=position;
-    double lat = position.latitude;
-    double lng = position.longitude;
-
-
-    // Make a referece to firestore
-    var ref = firestore.collection('locations');
-    GeoFirePoint center = geo.point(latitude: lat, longitude: lng);
-
-    // subscribe to query
-    print(markers);
-    subscription = radius.switchMap((rad) {
-      return geo.collection(collectionRef: ref).within(
-          center: center,
-          radius: rad,
-          field: 'position',
-          strictMode: true
-      );
-    }).listen(updateMarkers);
-  }
-  updateQuery(value) {
-    setState(() {
-      radius.add(value);
-    });
-  }*/
   void makeDriverOnlineNow() async {
  Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
    currentPosition=position;
-    print(currentfirebaseUser.uid);
-   Geofire.setLocation( currentfirebaseUser.uid,position.latitude, position.longitude);
-    rideRequestRef.onValue.listen((event) {
+    print(currentfirebaseDriver.uid);
 
-    });
-   rideRequestRef.onValue.listen((event) {
+   Geofire.setLocation( currentfirebaseDriver.uid,position.latitude, position.longitude);
+    rideRequestRef.onValue.listen((event) {
+        print(event.snapshot.value);
     });
   }
   void getLocationLiveUpdates(){
