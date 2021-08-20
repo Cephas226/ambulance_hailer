@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
   final startAddressFocusNode = FocusNode();
   final destinationAddressFocusNode = FocusNode();
   bool nearbyAvailableDriverKeysLoader = false;
-
+  DatabaseReference rideRequestRef;
   BitmapDescriptor nearByIcon;
   @override
   void initState() {
@@ -60,15 +60,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void saveRideRequest() async {
-    hController.rideRequestRef =
-        FirebaseDatabase.instance.reference().child("Ride Requests").push();
-    // Retrieving placemarks from addresses
+   rideRequestRef =FirebaseDatabase.instance.reference().child("Ride Requests");
     List<Location> startPlacemark = await locationFromAddress(startAddress);
     List<Location> destinationPlacemark = await locationFromAddress(destinationAddress);
 
-    // Use the retrieved coordinates of the current position,
-    // instead of the address if the start position is user's
-    // current position, as it results in better accuracy.
     double startLatitude = startAddress == currentAddress
         ? currentPosition.latitude
         : startPlacemark[0].latitude;
@@ -79,10 +74,6 @@ class _HomePageState extends State<HomePage> {
 
     double destinationLatitude = destinationPlacemark[0].latitude;
     double destinationLongitude = destinationPlacemark[0].longitude;
-
-    String startCoordinatesString = '($startLatitude, $startLongitude)';
-    String destinationCoordinatesString =
-        '($destinationLatitude, $destinationLongitude)';
 
     Map pickUpLocMap = {
       "latitude": startLatitude,
@@ -103,10 +94,13 @@ class _HomePageState extends State<HomePage> {
       "pickup_address":startAddress,
       "dropoff_address":destinationAddressController.text
     };
-    hController.rideRequestRef.push().set(rideInfoMap);
+    rideRequestRef.push().set(rideInfoMap);
+    print(rideRequestRef.once().then((DataSnapshot snapshot) => print(snapshot.value['uid'])));
   }
 
-
+  void cancelRideRequest(){
+    rideRequestRef.remove();
+  }
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses

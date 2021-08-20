@@ -82,57 +82,6 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
     getCurrentDriverInfo();
   }
 
-  void saveRideRequest() async {
-    hController.rideRequestRef =
-        FirebaseDatabase.instance.reference().child("Ride Requests").push();
-    // Retrieving placemarks from addresses
-    List<Location> startPlacemark = await locationFromAddress(startAddress);
-    List<Location> destinationPlacemark = await locationFromAddress(destinationAddress);
-
-    // Use the retrieved coordinates of the current position,
-    // instead of the address if the start position is user's
-    // current position, as it results in better accuracy.
-    double startLatitude = startAddress == currentAddress
-        ? currentPosition.latitude
-        : startPlacemark[0].latitude;
-
-    double startLongitude = startAddress == currentAddress
-        ? currentPosition.longitude
-        : startPlacemark[0].longitude;
-
-    double destinationLatitude = destinationPlacemark[0].latitude;
-    double destinationLongitude = destinationPlacemark[0].longitude;
-
-    String startCoordinatesString = '($startLatitude, $startLongitude)';
-    String destinationCoordinatesString =
-        '($destinationLatitude, $destinationLongitude)';
-
-   // print(pickUp);
-
-
-    Map pickUpLocMap = {
-      "latitude": startLatitude,
-      "longitude": startLongitude,
-    };
-    Map dropOffMap = {
-      "latitude": destinationLatitude,
-      "longitude": destinationLongitude,
-    };
-    Map rideInfoMap = {
-      "driver_in": "waiting",
-      "payment_method":"cash",
-      "pickup":pickUpLocMap,
-      "drop":dropOffMap,
-      "created_at":DateTime.now().toString(),
-      "rider_name":"Cephas",
-      "rider_phone":"0639607953",
-      "pickup_address":startAddress,
-      "dropoff_address":destinationAddressController.text
-    };
-    hController.rideRequestRef.push().set(rideInfoMap);
-  }
-
-
   Future<bool> _calculateDistance() async {
     try {
       // Retrieving placemarks from addresses

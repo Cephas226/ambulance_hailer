@@ -26,7 +26,7 @@ class PushNotificationService{
   }
   Future <String> getToken(User userDriver) async {
     String token = await firebaseMessaging.getToken();
-    print("this is token : ");
+    print("this is token : "+token);
     print(currentfirebaseDriver.uid);
     usersRef.child(userDriver.uid).child("token").set(token);
     firebaseMessaging.subscribeToTopic("alldrivers");
