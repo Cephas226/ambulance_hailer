@@ -12,9 +12,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../main.dart';
+
 class HomeDriverController extends GetxController {
 
-  DatabaseReference rideRequestRef;
   @override
   void dispose() {
     super.dispose();

@@ -1,7 +1,10 @@
+import 'package:ambulance_hailer/driver/driver_screen/newRideScreen.dart';
+import 'package:ambulance_hailer/main.dart';
 import 'package:ambulance_hailer/models/rideDetails.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class NotificationDialog extends StatelessWidget{
   final RideDetails rideDetails;
  NotificationDialog({this.rideDetails});
@@ -72,7 +75,9 @@ class NotificationDialog extends StatelessWidget{
                            padding: EdgeInsets.all(8.0),
                            child: Text("Cancel".toUpperCase(),style: TextStyle(fontSize: 14.0))),
                       SizedBox(height:8),
-                      RaisedButton(onPressed:()=>{}, shape: RoundedRectangleBorder(
+                      RaisedButton(onPressed:()=>{
+                        checkAvailabilityChek(),
+                      }, shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color:Colors.green)),
                           color:Colors.white,
@@ -88,5 +93,31 @@ class NotificationDialog extends StatelessWidget{
         ),
       ),
     );
+  }
+  void checkAvailabilityChek(){
+
+    rideRequestRef.once().then((DataSnapshot dataSnapshot){
+     Get.back();
+      String theRideId = "";
+      if (dataSnapshot.value !=null){
+        theRideId =dataSnapshot.value.toString();
+    }
+      else {
+        print("Ride not exist");
+      }
+      if(theRideId == rideDetails.ride_request_id){
+          rideRequestRef.set("accepted");
+          Get.to(NewRidePage(rideDetails: rideDetails));
+      }
+      else if (theRideId == "canceled"){
+        print("Ride has been cancelled");
+      }
+      else if (theRideId == "timeout"){
+        print("Ride has been cancelled");
+      }
+      else {
+        print("Ride not exist");
+      }
+    });
   }
 }

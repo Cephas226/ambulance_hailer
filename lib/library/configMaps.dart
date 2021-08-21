@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 User firebaseUser;
 User currentfirebaseUser;
 User currentfirebaseDriver;
+Position currentPosition;
 Users userCurrentInfo;
 StreamSubscription <Position> homeDriverStreamSubcription;
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;

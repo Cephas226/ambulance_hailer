@@ -1,5 +1,6 @@
 
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,7 +11,7 @@ import 'CustomTextStyle.dart';
 
 class BottomSheetContent extends GetView<HomeController> {
   bool isDismissible;
-
+  DatabaseReference rideRequestRef;
   BottomSheetContent({this.isDismissible});
 
   @override
@@ -62,8 +63,8 @@ class BottomSheetContent extends GetView<HomeController> {
                           margin: EdgeInsets.only(top: 16),
                           child: RaisedButton(
                             onPressed: () {
-                              controller.cancelRideRequest();
-                              Get.back();
+                              print("closed");
+                              rideRequestRef.remove();
                             },
                             color: Colors.red,
                             child: Text(
@@ -126,5 +127,9 @@ class BottomSheetContent extends GetView<HomeController> {
           ),
         ),
       );
+  }
+
+  void cancelRideRequest(){
+    rideRequestRef.remove();
   }
 }

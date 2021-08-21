@@ -53,7 +53,6 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
   String startAddress = '';
   String destinationAddress = '';
   RxString currentAddress = ''.obs;
-  Position currentPosition;
   PolylinePoints polylinePoints;
   TextEditingController startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
@@ -84,28 +83,18 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
 
   Future<bool> _calculateDistance() async {
     try {
-      // Retrieving placemarks from addresses
       List<Location> startPlacemark = await locationFromAddress(startAddress);
       List<Location> destinationPlacemark = await locationFromAddress(destinationAddress);
-
-      // Use the retrieved coordinates of the current position,
-      // instead of the address if the start position is user's
-      // current position, as it results in better accuracy.
       double startLatitude = startAddress == currentAddress
           ?currentPosition.latitude
-          : startPlacemark[0].latitude;
-
-      double startLongitude = startAddress == currentAddress
+          : startPlacemark[0].latitude;double startLongitude = startAddress == currentAddress
           ? currentPosition.longitude
           : startPlacemark[0].longitude;
-
       double destinationLatitude = destinationPlacemark[0].latitude;
       double destinationLongitude = destinationPlacemark[0].longitude;
-
       String startCoordinatesString = '($startLatitude, $startLongitude)';
       String destinationCoordinatesString ='($destinationLatitude, $destinationLongitude)';
       print(destinationAddress.toString());
-      // Start Location Marker
       Marker startMarker = Marker(
         markerId: MarkerId(startCoordinatesString),
         position: LatLng(startLatitude, startLongitude),
@@ -115,8 +104,6 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
         ),
         icon: BitmapDescriptor.defaultMarker,
       );
-
-      // Destination Location Marker
       Marker destinationMarker = Marker(
         markerId: MarkerId(destinationCoordinatesString),
         position: LatLng(destinationLatitude, destinationLongitude),
@@ -400,7 +387,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
                                     driversStatusText="Offline Now - Go online";
                                     isDriverAvailable=false;
                                   });
-                                  makeDriverOfflineNow();
+                                  hController.makeDriverOfflineNow();
                                 }
                               },
                               child: Padding(
@@ -494,8 +481,8 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
     print(currentfirebaseDriver.uid);
 
    Geofire.setLocation( currentfirebaseDriver.uid,position.latitude, position.longitude);
-    rideRequestRef.onValue.listen((event) {
-        print(event.snapshot.value);
+   rideRequestRef.set("searching");
+   rideRequestRef.onValue.listen((event) {
     });
   }
   void getLocationLiveUpdates(){
@@ -516,10 +503,5 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
           );
      });
   }
-  void makeDriverOfflineNow(){
-    Geofire.removeLocation(currentfirebaseUser.uid);
-    rideRequestRef.onDisconnect();
-    rideRequestRef.remove();
-    rideRequestRef=null;
-  }
+
 }

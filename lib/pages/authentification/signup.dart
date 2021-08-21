@@ -543,11 +543,14 @@ class _SignUpPageState extends State<SignUpPage> {
           "email":authentificationController.emailController.text.trim(),
           "phone":authentificationController.phoneController.text.trim(),
           "userType":authentificationController.selectedToggleUserType.first?"Driver":"Rider",
+        };
+        Map carDataMap ={
           "carModel":authentificationController.carModelController.text,
           "carNumber":authentificationController.carNumberController.text
         };
         print(authentificationController.carModelController.text);
         usersRef.child(firebaseUser.uid).set(userDataMap).onError((error, stackTrace) => print(error));
+        usersRef.child(firebaseUser.uid).child("car_details").set(carDataMap).onError((error, stackTrace) => print(error));
         Get.off(DashboardDriverPage());
       }
       else {
