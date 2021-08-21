@@ -1,8 +1,10 @@
+import 'package:ambulance_hailer/Notifications/notification.dart';
 import 'package:ambulance_hailer/library/configMaps.dart';
 import 'package:ambulance_hailer/models/rideDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:io' show Platform;
 
@@ -11,16 +13,19 @@ import '../main.dart';
 class PushNotificationService{
   final FirebaseMessaging firebaseMessaging=FirebaseMessaging();
 
-  Future initialize() async {
+  Future initialize(context) async {
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        retrieveRideRequestInfo(getRideRequestId(message));
+        print("onMessage");
+        retrieveRideRequestInfo(getRideRequestId(message),context);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
+        print("onLaunch");
+        retrieveRideRequestInfo(getRideRequestId(message),context);
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
+        print("onResume");
+        retrieveRideRequestInfo(getRideRequestId(message),context);
       },
     );
   }
@@ -32,7 +37,7 @@ class PushNotificationService{
     firebaseMessaging.subscribeToTopic("alldrivers");
     firebaseMessaging.subscribeToTopic("allusers");
   }
-  void retrieveRideRequestInfo (String rideRequestId)
+  void retrieveRideRequestInfo (String rideRequestId,context)
   {
     newRequestRef.child(rideRequestId)
         .once()
@@ -57,22 +62,25 @@ class PushNotificationService{
         print('Information ::');
         print(rideDetails.pick_address);
         print(rideDetails.drop_address);
+
+        showDialog(
+            context: context,
+            barrierDismissible:true,
+            builder: (BuildContext context)=>NotificationDialog(rideDetails:rideDetails));
       }
     });
   }
 
-  getRideRequestId(Map<String,dynamic> message)
-  async {
+  String getRideRequestId(Map<String,dynamic> message)
+   {
      String rideRequestId = "";
      if (Platform.isAndroid){
-        print("this is Ride Request Id ");
         rideRequestId = message["data"]["ride_request_id"];
-        print(rideRequestId);
+        print("this is Ride Request Id"+rideRequestId);
      }
      else {
-       print("this is Ride Request Id ");
        rideRequestId = message["ride_request_id"];
-       print(rideRequestId);
+       print("this is Ride Request Id"+rideRequestId);
      }
      return rideRequestId;
   }

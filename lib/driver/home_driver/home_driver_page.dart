@@ -338,7 +338,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
       });
     });
     PushNotificationService pushNotificationService =  PushNotificationService();
-    pushNotificationService.initialize();
+    pushNotificationService.initialize(context);
     pushNotificationService.getToken(currentfirebaseDriver);
   }
 
