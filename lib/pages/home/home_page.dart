@@ -150,64 +150,6 @@ class _HomePageState extends State<HomePage> {
       markers.add(startMarker);
       markers.add(destinationMarker);
 
-
-   /*   markers.add(Marker(
-        //add first marker
-          markerId: MarkerId(initialPosition.toString() + 1.0.toString()),
-          position: LatLng(33.609434051916494, -7.623460799015407),
-          infoWindow: InfoWindow(
-            //popup info
-            title: 'Marker Title First ',
-            snippet: 'My Custom Subtitle',
-          ),
-          icon: await BitmapDescriptor.fromAssetImage(
-              ImageConfiguration(devicePixelRatio: 1.5),
-              'images/taxi.png') //Icon for Marker
-      ));
-
-      markers.add(Marker(
-        //add second marker
-        markerId: MarkerId(initialPosition.toString() + 2.0.toString()),
-        position: LatLng(33.589939805473726, -7.591033264638604),
-        infoWindow: InfoWindow(
-          //popup info
-          title: 'Marker Title Second ',
-          snippet: 'My Custom Subtitle',
-        ),
-        icon: await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 1.5),
-            'images/taxi.png'), //Icon for Marker
-      ));
-
-      markers.add(Marker(
-        //add second marker
-        markerId: MarkerId(initialPosition.toString() + 3.0.toString()),
-        position: LatLng(33.599924400228765, -7.612786721808061),
-        infoWindow: InfoWindow(
-          //popup info
-          title: 'Marker Title Second ',
-          snippet: 'My Custom Subtitle',
-        ),
-        icon: await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 2.5),
-            'images/taxi.png'), //Icon for Marker
-      ));
-      markers.add(Marker(
-        //add second marker
-        markerId: MarkerId(initialPosition.toString() + 4.0.toString()),
-        position: LatLng(33.58414632897516, -7.623243031941734),
-        infoWindow: InfoWindow(
-          //popup info
-          title: 'Marker Title Second ',
-          snippet: 'My Custom Subtitle',
-        ),
-        icon: await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 2.5),
-            'images/taxi.png'), //Icon for Marker
-      ));*/
-
-      // Calculating to check that the position relative
-      // to the frame, and pan & zoom the camera accordingly.
       double miny = (startLatitude <= destinationLatitude)
           ? startLatitude
           : destinationLatitude;

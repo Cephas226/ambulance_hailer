@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:ambulance_hailer/Notifications/pushNotificationService.dart';
 import 'package:ambulance_hailer/main.dart';
+import 'package:ambulance_hailer/models/allUsers.dart';
 import 'package:ambulance_hailer/pages/home/home_controller.dart';
 import 'package:ambulance_hailer/utils/CustomTextStyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -250,6 +251,7 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
+
   // Create the polylines for showing the route between two places
   _createPolylines(double startLatitude,double startLongitude,double destinationLatitude,double destinationLongitude) async {
     polylinePoints = PolylinePoints();
@@ -312,17 +314,14 @@ class _HomeDriverPageState extends State<HomeDriverPage> {
 
 
   void getCurrentDriverInfo() async {
-    var db = FirebaseDatabase.instance.reference().child("users");
-    db.once().then((DataSnapshot snapshot){
-      Map<dynamic, dynamic> values = snapshot.value;
-      values.forEach((key,values) {
-        if (values["userType"]=="Driver"){
+
+    usersRef.child(currentfirebaseDriver.uid).once().then((DataSnapshot dataSnapshot ){
+      if (dataSnapshot.value!=null){
+        if (dataSnapshot.value["userType"]=="Driver"){
+          usersInformation = Users.fromSnapshot(dataSnapshot);
           currentfirebaseDriver=FirebaseAuth.instance.currentUser;
         }
-        else {
-          currentfirebaseUser=FirebaseAuth.instance.currentUser;
-        }
-      });
+      }
     });
     PushNotificationService pushNotificationService =  PushNotificationService();
     pushNotificationService.initialize(context);
